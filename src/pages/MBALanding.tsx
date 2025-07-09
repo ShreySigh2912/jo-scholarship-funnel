@@ -7,142 +7,114 @@ import LeadForm from '@/components/LeadForm';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import FAQSection from '@/components/FAQSection';
 import { toast } from '@/hooks/use-toast';
-import { 
-  GraduationCap, 
-  TrendingUp, 
-  Clock, 
-  Users, 
-  Star, 
-  Award, 
-  Briefcase,
-  Brain,
-  BarChart,
-  Megaphone,
-  ChevronRight,
-  Shield,
-  CheckCircle,
-  Target,
-  Globe,
-  BookOpen,
-  Phone
-} from 'lucide-react';
-
+import { GraduationCap, TrendingUp, Clock, Users, Star, Award, Briefcase, Brain, BarChart, Megaphone, ChevronRight, Shield, CheckCircle, Target, Globe, BookOpen, Phone } from 'lucide-react';
 interface MBALandingProps {
   resetTimer?: boolean;
 }
-
-export default function MBALanding({ resetTimer = false }: MBALandingProps) {
+export default function MBALanding({
+  resetTimer = false
+}: MBALandingProps) {
   const [showForm, setShowForm] = useState(false);
   const formRef = useRef<HTMLElement>(null);
-
   const scrollToForm = () => {
     setShowForm(true);
     setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth' });
+      formRef.current?.scrollIntoView({
+        behavior: 'smooth'
+      });
     }, 100);
   };
-
   const handleFormSuccess = () => {
     toast({
       title: "🎉 You've unlocked your scholarship eligibility!",
-      description: "Our counselor will contact you within 24 hours to confirm your ₹25,000 scholarship.",
+      description: "Our counselor will contact you within 24 hours to confirm your ₹25,000 scholarship."
     });
   };
 
   // Stats data
-  const stats = [
-    { number: "10,000+", label: "Alumni" },
-    { number: "4.8/5", label: "Rating" },
-    { number: "₹2.5L", label: "Avg Hike" },
-    { number: "85%", label: "Placement Success" }
-  ];
+  const stats = [{
+    number: "10,000+",
+    label: "Alumni"
+  }, {
+    number: "4.8/5",
+    label: "Rating"
+  }, {
+    number: "₹2.5L",
+    label: "Avg Hike"
+  }, {
+    number: "85%",
+    label: "Placement Success"
+  }];
 
   // Program highlights
-  const highlights = [
-    {
-      icon: Target,
-      title: "Career-Focused Curriculum",
-      description: "95% job relevance with industry-aligned courses"
-    },
-    {
-      icon: Clock,
-      title: "Flexible Learning",
-      description: "Study anytime, anywhere at your own pace"
-    },
-    {
-      icon: Users,
-      title: "Placement Support",
-      description: "85% placement rate with dedicated career support"
-    },
-    {
-      icon: Award,
-      title: "Industry Recognition",
-      description: "NAAC A+ rating and UGC-DEB approved"
-    },
-    {
-      icon: BookOpen,
-      title: "Expert Faculty",
-      description: "20+ years average industry experience"
-    },
-    {
-      icon: TrendingUp,
-      title: "Proven ROI",
-      description: "₹2.5L+ average salary hike for graduates"
-    }
-  ];
+  const highlights = [{
+    icon: Target,
+    title: "Career-Focused Curriculum",
+    description: "95% job relevance with industry-aligned courses"
+  }, {
+    icon: Clock,
+    title: "Flexible Learning",
+    description: "Study anytime, anywhere at your own pace"
+  }, {
+    icon: Users,
+    title: "Placement Support",
+    description: "85% placement rate with dedicated career support"
+  }, {
+    icon: Award,
+    title: "Industry Recognition",
+    description: "NAAC A+ rating and UGC-DEB approved"
+  }, {
+    icon: BookOpen,
+    title: "Expert Faculty",
+    description: "20+ years average industry experience"
+  }, {
+    icon: TrendingUp,
+    title: "Proven ROI",
+    description: "₹2.5L+ average salary hike for graduates"
+  }];
 
   // Future-ready electives
-  const electives = [
-    {
-      icon: Brain,
-      title: "Artificial Intelligence",
-      skills: ["Fundamentals", "Generative AI", "Applied AI", "Algorithms"],
-      isInDemand: true
-    },
-    {
-      icon: BarChart,
-      title: "Data Science & Business Analytics",
-      skills: ["Python", "SQL", "Analytics", "Visualization", "AI for Business"],
-      isInDemand: true
-    },
-    {
-      icon: Megaphone,
-      title: "Digital Marketing & E-Commerce",
-      skills: ["Inbound/Outbound Marketing", "Brand Strategy", "Product Strategy", "Growth Strategy"],
-      isInDemand: true
-    }
-  ];
+  const electives = [{
+    icon: Brain,
+    title: "Artificial Intelligence",
+    skills: ["Fundamentals", "Generative AI", "Applied AI", "Algorithms"],
+    isInDemand: true
+  }, {
+    icon: BarChart,
+    title: "Data Science & Business Analytics",
+    skills: ["Python", "SQL", "Analytics", "Visualization", "AI for Business"],
+    isInDemand: true
+  }, {
+    icon: Megaphone,
+    title: "Digital Marketing & E-Commerce",
+    skills: ["Inbound/Outbound Marketing", "Brand Strategy", "Product Strategy", "Growth Strategy"],
+    isInDemand: true
+  }];
 
   // Success stories
-  const testimonials = [
-    {
-      name: "Merin Anns Mathew",
-      role: "Senior Accountant",
-      company: "Global Corp",
-      image: "/placeholder.svg",
-      story: "JAIN Online MBA helped me advance my accounting career. I got promoted to Senior Accountant with a 35% salary hike within 6 months of graduation.",
-      verified: true
-    },
-    {
-      name: "Madhuri Sandeep",
-      role: "Startup Founder",
-      company: "TechStart Solutions",
-      image: "/placeholder.svg",
-      story: "The entrepreneurship and business strategy modules gave me the confidence to expand my startup. We're now a team of 25 with 3x revenue growth.",
-      verified: true
-    },
-    {
-      name: "Karthik Rajendran",
-      role: "Data Science Manager",
-      company: "Analytics Pro",
-      image: "/placeholder.svg",
-      story: "Transitioned from software development to data science through the analytics specialization. Now leading a team of data scientists with 50% salary increase.",
-      verified: true
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-background">
+  const testimonials = [{
+    name: "Merin Anns Mathew",
+    role: "Senior Accountant",
+    company: "Global Corp",
+    image: "/placeholder.svg",
+    story: "JAIN Online MBA helped me advance my accounting career. I got promoted to Senior Accountant with a 35% salary hike within 6 months of graduation.",
+    verified: true
+  }, {
+    name: "Madhuri Sandeep",
+    role: "Startup Founder",
+    company: "TechStart Solutions",
+    image: "/placeholder.svg",
+    story: "The entrepreneurship and business strategy modules gave me the confidence to expand my startup. We're now a team of 25 with 3x revenue growth.",
+    verified: true
+  }, {
+    name: "Karthik Rajendran",
+    role: "Data Science Manager",
+    company: "Analytics Pro",
+    image: "/placeholder.svg",
+    story: "Transitioned from software development to data science through the analytics specialization. Now leading a team of data scientists with 50% salary increase.",
+    verified: true
+  }];
+  return <div className="min-h-screen bg-background">
       {/* Scholarship Banner */}
       <div className="bg-secondary text-secondary-foreground py-3 px-4 text-center">
         <p className="font-semibold text-sm md:text-base">
@@ -190,13 +162,7 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
                 </Badge>
               </div>
 
-              <Button 
-                onClick={scrollToForm}
-                size="lg" 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 rounded-xl shadow-lg"
-              >
-                Get Free Career Consultation + Scholarship Info
-              </Button>
+              <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 rounded-xl shadow-lg">Get ₹25,000 Scholarship</Button>
             </div>
 
             <div className="space-y-6">
@@ -228,16 +194,14 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
       <section className="py-8 bg-muted">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {stats.map((stat, index) => (
-              <div key={index}>
+            {stats.map((stat, index) => <div key={index}>
                 <div className="text-2xl md:text-3xl font-bold text-primary mb-1">
                   {stat.number}
                 </div>
                 <div className="text-sm md:text-base text-muted-foreground">
                   {stat.label}
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -252,8 +216,7 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {highlights.map((highlight, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
+            {highlights.map((highlight, index) => <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
                   <highlight.icon className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-primary mb-3">
@@ -263,8 +226,7 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
                     {highlight.description}
                   </p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -282,29 +244,23 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {electives.map((elective, index) => (
-              <Card key={index} className="p-6 relative overflow-hidden">
-                {elective.isInDemand && (
-                  <Badge className="absolute top-4 right-4 bg-success text-success-foreground">
+            {electives.map((elective, index) => <Card key={index} className="p-6 relative overflow-hidden">
+                {elective.isInDemand && <Badge className="absolute top-4 right-4 bg-success text-success-foreground">
                     In-demand
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardContent className="pt-6">
                   <elective.icon className="h-12 w-12 text-primary mb-4" />
                   <h3 className="text-xl font-bold text-primary mb-4">
                     {elective.title}
                   </h3>
                   <div className="space-y-2">
-                    {elective.skills.map((skill, skillIndex) => (
-                      <div key={skillIndex} className="flex items-center gap-2 text-sm">
+                    {elective.skills.map((skill, skillIndex) => <div key={skillIndex} className="flex items-center gap-2 text-sm">
                         <CheckCircle className="h-4 w-4 text-primary" />
                         <span>{skill}</span>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -358,11 +314,7 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
             </div>
           </Card>
 
-          <Button 
-            onClick={scrollToForm}
-            size="lg" 
-            className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 rounded-xl shadow-lg"
-          >
+          <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 rounded-xl shadow-lg">
             Claim My ₹25,000 Scholarship Now
           </Button>
         </div>
@@ -381,8 +333,7 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="p-6 shadow-lg">
+            {testimonials.map((testimonial, index) => <Card key={index} className="p-6 shadow-lg">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
@@ -395,31 +346,26 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
                       <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                       <p className="text-xs text-muted-foreground">{testimonial.company}</p>
                     </div>
-                    {testimonial.verified && (
-                      <Badge variant="secondary" className="ml-auto">
+                    {testimonial.verified && <Badge variant="secondary" className="ml-auto">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Verified
-                      </Badge>
-                    )}
+                      </Badge>}
                   </div>
                   <p className="text-muted-foreground leading-relaxed">
                     "{testimonial.story}"
                   </p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
 
       {/* Lead Capture Form */}
-      {showForm && (
-        <section ref={formRef} className="py-16 px-4 bg-muted">
+      {showForm && <section ref={formRef} className="py-16 px-4 bg-muted">
           <div className="container mx-auto max-w-2xl">
             <LeadForm onSuccess={handleFormSuccess} />
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* FAQ Section */}
       <FAQSection />
@@ -443,6 +389,5 @@ export default function MBALanding({ resetTimer = false }: MBALandingProps) {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }
