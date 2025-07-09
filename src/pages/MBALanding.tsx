@@ -154,12 +154,6 @@ export default function MBALanding({
             onClick: scrollToForm,
             variant: "default",
             icon: <GraduationCap className="h-5 w-5" />
-          },
-          {
-            text: "Call Now",
-            href: "tel:1800-123-4567",
-            variant: "outline",
-            icon: <Icons.phone className="h-4 w-4" />
           }
         ]}
       >
