@@ -61,7 +61,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				scholarship: {
+					DEFAULT: 'hsl(var(--scholarship-bg))',
+					border: 'hsl(var(--scholarship-border))'
+				},
+				success: {
+					DEFAULT: 'hsl(var(--success-bg))',
+					border: 'hsl(var(--success-border))'
 				}
+			},
+			fontFamily: {
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'heading': ['DM Sans', 'system-ui', 'sans-serif']
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
