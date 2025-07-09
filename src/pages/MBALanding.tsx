@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { HeroSection } from '@/components/ui/hero-section';
 import CountdownTimer from '@/components/CountdownTimer';
-import LeadForm from '@/components/LeadForm';
+import { ContactForm } from '@/components/ui/component';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import FAQSection from '@/components/FAQSection';
 import { toast } from '@/hooks/use-toast';
@@ -26,7 +26,7 @@ export default function MBALanding({
       });
     }, 100);
   };
-  const handleFormSuccess = () => {
+  const handleFormSuccess = (data: { name: string; email: string; phone: string }) => {
     toast({
       title: "🎉 You've unlocked your scholarship eligibility!",
       description: "Our counselor will contact you within 24 hours to confirm your ₹25,000 scholarship."
@@ -360,7 +360,7 @@ export default function MBALanding({
       {/* Lead Capture Form */}
       {showForm && <section ref={formRef} className="py-16 px-4 bg-muted">
           <div className="container mx-auto max-w-2xl">
-            <LeadForm onSuccess={handleFormSuccess} />
+            <ContactForm onSubmit={handleFormSuccess} />
           </div>
         </section>}
 
