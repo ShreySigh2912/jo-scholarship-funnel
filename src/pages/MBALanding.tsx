@@ -1,13 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { HeroSection } from '@/components/ui/hero-section';
 import CountdownTimer from '@/components/CountdownTimer';
 import LeadForm from '@/components/LeadForm';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import FAQSection from '@/components/FAQSection';
 import { toast } from '@/hooks/use-toast';
 import { GraduationCap, TrendingUp, Clock, Users, Star, Award, Briefcase, Brain, BarChart, Megaphone, ChevronRight, Shield, CheckCircle, Target, Globe, BookOpen, Phone } from 'lucide-react';
+import { Icons } from '@/components/ui/icons';
 interface MBALandingProps {
   resetTimer?: boolean;
 }
@@ -136,56 +138,56 @@ export default function MBALanding({
       </header>
 
       {/* Hero Section */}
-      <section className="py-8 md:py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div>
-              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-primary mb-4 md:mb-6 leading-tight">
-                Future-Proof MBA – 100% Online
-              </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-6 md:mb-8">
-                Advance your career without quitting your job
-              </p>
-              
-              <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 md:mb-8">
-                <Badge variant="secondary" className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
-                  <TrendingUp className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                  12% Average Salary Hike
-                </Badge>
-                <Badge variant="secondary" className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
-                  <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                  Flexible Timings
-                </Badge>
-                <Badge variant="secondary" className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
-                  <Award className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                  Industry Recognized Degree
-                </Badge>
-              </div>
-
-              <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">Get ₹25,000 Scholarship</Button>
-            </div>
-
-            <div className="space-y-6 mt-8 lg:mt-0">
-              <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20">
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="flex items-center gap-3">
-                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                    <span className="font-semibold text-sm sm:text-base">Career Growth</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                    <span className="font-semibold text-sm sm:text-base">Work-Life Balance</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                    <span className="font-semibold text-sm sm:text-base">Industry Connect</span>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
+      <HeroSection
+        badge={{
+          text: "🎓 Get ₹25,000 Scholarship – Limited Time",
+          action: {
+            text: "Apply via Consultation",
+            onClick: scrollToForm
+          }
+        }}
+        title="Future-Proof MBA – 100% Online"
+        description="Advance your career without quitting your job"
+        actions={[
+          {
+            text: "Get ₹25,000 Scholarship",
+            onClick: scrollToForm,
+            variant: "default",
+            icon: <GraduationCap className="h-5 w-5" />
+          },
+          {
+            text: "Call Now",
+            href: "tel:1800-123-4567",
+            variant: "outline",
+            icon: <Icons.phone className="h-4 w-4" />
+          }
+        ]}
+      >
+        {/* Hero Benefits Cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8 w-full max-w-4xl">
+          <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20">
+            <CardContent className="pt-4 sm:pt-6 text-center">
+              <TrendingUp className="h-8 w-8 sm:h-10 sm:w-10 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold text-primary mb-2">Career Growth</h3>
+              <p className="text-sm text-muted-foreground">12% Average Salary Hike</p>
+            </CardContent>
+          </Card>
+          <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20">
+            <CardContent className="pt-4 sm:pt-6 text-center">
+              <Clock className="h-8 w-8 sm:h-10 sm:w-10 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold text-primary mb-2">Work-Life Balance</h3>
+              <p className="text-sm text-muted-foreground">Flexible Timings</p>
+            </CardContent>
+          </Card>
+          <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20 sm:col-span-2 lg:col-span-1">
+            <CardContent className="pt-4 sm:pt-6 text-center">
+              <Award className="h-8 w-8 sm:h-10 sm:w-10 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold text-primary mb-2">Industry Connect</h3>
+              <p className="text-sm text-muted-foreground">Industry Recognized Degree</p>
+            </CardContent>
+          </Card>
         </div>
-      </section>
+      </HeroSection>
 
       {/* Countdown Timer */}
       <CountdownTimer resetTimer={resetTimer} className="sticky top-16 z-30" />
