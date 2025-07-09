@@ -136,49 +136,49 @@ export default function MBALanding({
       </header>
 
       {/* Hero Section */}
-      <section className="py-12 md:py-20 px-4">
+      <section className="py-8 md:py-20 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
-              <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-primary mb-4 md:mb-6 leading-tight">
                 Future-Proof MBA – 100% Online
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-8">
+              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-6 md:mb-8">
                 Advance your career without quitting your job
               </p>
               
-              <div className="flex flex-wrap gap-3 mb-8">
-                <Badge variant="secondary" className="px-4 py-2 text-sm">
-                  <TrendingUp className="mr-1 h-4 w-4" />
+              <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 md:mb-8">
+                <Badge variant="secondary" className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
+                  <TrendingUp className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                   12% Average Salary Hike
                 </Badge>
-                <Badge variant="secondary" className="px-4 py-2 text-sm">
-                  <Clock className="mr-1 h-4 w-4" />
+                <Badge variant="secondary" className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
+                  <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                   Flexible Timings
                 </Badge>
-                <Badge variant="secondary" className="px-4 py-2 text-sm">
-                  <Award className="mr-1 h-4 w-4" />
+                <Badge variant="secondary" className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm">
+                  <Award className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                   Industry Recognized Degree
                 </Badge>
               </div>
 
-              <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 rounded-xl shadow-lg">Get ₹25,000 Scholarship</Button>
+              <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">Get ₹25,000 Scholarship</Button>
             </div>
 
-            <div className="space-y-6">
-              <Card className="p-6 shadow-lg border-2 border-primary/20">
-                <div className="space-y-4">
+            <div className="space-y-6 mt-8 lg:mt-0">
+              <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center gap-3">
-                    <TrendingUp className="h-6 w-6 text-primary" />
-                    <span className="font-semibold">Career Growth</span>
+                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                    <span className="font-semibold text-sm sm:text-base">Career Growth</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Clock className="h-6 w-6 text-primary" />
-                    <span className="font-semibold">Work-Life Balance</span>
+                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                    <span className="font-semibold text-sm sm:text-base">Work-Life Balance</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Globe className="h-6 w-6 text-primary" />
-                    <span className="font-semibold">Industry Connect</span>
+                    <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                    <span className="font-semibold text-sm sm:text-base">Industry Connect</span>
                   </div>
                 </div>
               </Card>
@@ -215,14 +215,14 @@ export default function MBALanding({
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {highlights.map((highlight, index) => <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6">
-                  <highlight.icon className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-primary mb-3">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {highlights.map((highlight, index) => <Card key={index} className="p-4 sm:p-6 text-center hover:shadow-lg transition-shadow">
+                <CardContent className="pt-4 sm:pt-6">
+                  <highlight.icon className="h-10 w-10 sm:h-12 sm:w-12 text-primary mx-auto mb-3 sm:mb-4" />
+                  <h3 className="text-lg sm:text-xl font-bold text-primary mb-2 sm:mb-3">
                     {highlight.title}
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm sm:text-base text-muted-foreground">
                     {highlight.description}
                   </p>
                 </CardContent>
@@ -243,14 +243,14 @@ export default function MBALanding({
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {electives.map((elective, index) => <Card key={index} className="p-6 relative overflow-hidden">
-                {elective.isInDemand && <Badge className="absolute top-4 right-4 bg-success text-success-foreground">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+            {electives.map((elective, index) => <Card key={index} className="p-4 sm:p-6 relative overflow-hidden">
+                {elective.isInDemand && <Badge className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-success text-success-foreground text-xs">
                     In-demand
                   </Badge>}
-                <CardContent className="pt-6">
-                  <elective.icon className="h-12 w-12 text-primary mb-4" />
-                  <h3 className="text-xl font-bold text-primary mb-4">
+                <CardContent className="pt-4 sm:pt-6">
+                  <elective.icon className="h-10 w-10 sm:h-12 sm:w-12 text-primary mb-3 sm:mb-4" />
+                  <h3 className="text-lg sm:text-xl font-bold text-primary mb-3 sm:mb-4">
                     {elective.title}
                   </h3>
                   <div className="space-y-2">
@@ -282,31 +282,31 @@ export default function MBALanding({
             Limited scholarships now available for eligible learners. Apply now through your free consultation call.
           </p>
 
-          <div className="grid md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-background p-4 rounded-lg border">
-              <div className="font-semibold text-primary">1. Test</div>
-              <div className="text-sm text-muted-foreground">Quick eligibility assessment</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+            <div className="bg-background p-3 md:p-4 rounded-lg border">
+              <div className="font-semibold text-primary text-sm md:text-base">1. Test</div>
+              <div className="text-xs md:text-sm text-muted-foreground">Quick eligibility assessment</div>
             </div>
-            <div className="bg-background p-4 rounded-lg border">
-              <div className="font-semibold text-primary">2. Result</div>
-              <div className="text-sm text-muted-foreground">Scholarship confirmation</div>
+            <div className="bg-background p-3 md:p-4 rounded-lg border">
+              <div className="font-semibold text-primary text-sm md:text-base">2. Result</div>
+              <div className="text-xs md:text-sm text-muted-foreground">Scholarship confirmation</div>
             </div>
-            <div className="bg-background p-4 rounded-lg border">
-              <div className="font-semibold text-primary">3. Pay ₹5000</div>
-              <div className="text-sm text-muted-foreground">Booking amount</div>
+            <div className="bg-background p-3 md:p-4 rounded-lg border">
+              <div className="font-semibold text-primary text-sm md:text-base">3. Pay ₹5000</div>
+              <div className="text-xs md:text-sm text-muted-foreground">Booking amount</div>
             </div>
-            <div className="bg-background p-4 rounded-lg border">
-              <div className="font-semibold text-primary">4. Enroll</div>
-              <div className="text-sm text-muted-foreground">Start your MBA journey</div>
+            <div className="bg-background p-3 md:p-4 rounded-lg border">
+              <div className="font-semibold text-primary text-sm md:text-base">4. Enroll</div>
+              <div className="text-xs md:text-sm text-muted-foreground">Start your MBA journey</div>
             </div>
           </div>
 
-          <Card className="p-6 mb-8 bg-background border-l-4 border-l-primary">
+          <Card className="p-4 sm:p-6 mb-6 md:mb-8 bg-background border-l-4 border-l-primary">
             <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-primary mt-1" />
+              <Shield className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
               <div className="text-left">
-                <h4 className="font-semibold text-primary mb-2">Is the scholarship real?</h4>
-                <p className="text-muted-foreground">
+                <h4 className="font-semibold text-primary mb-2 text-sm sm:text-base">Is the scholarship real?</h4>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Yes, absolutely! This is a merit-based scholarship for qualified candidates. 
                   During your consultation, our counselor will assess your profile and confirm eligibility.
                 </p>
@@ -314,7 +314,7 @@ export default function MBALanding({
             </div>
           </Card>
 
-          <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 rounded-xl shadow-lg">
+          <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">
             Claim My ₹25,000 Scholarship Now
           </Button>
         </div>
@@ -332,26 +332,27 @@ export default function MBALanding({
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => <Card key={index} className="p-6 shadow-lg">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                      <span className="font-semibold text-primary">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {testimonials.map((testimonial, index) => <Card key={index} className="p-4 sm:p-6 shadow-lg">
+                <CardContent className="pt-4 sm:pt-6">
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="font-semibold text-primary text-sm sm:text-base">
                         {testimonial.name.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-primary">{testimonial.name}</h4>
-                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-primary text-sm sm:text-base">{testimonial.name}</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</p>
                       <p className="text-xs text-muted-foreground">{testimonial.company}</p>
                     </div>
-                    {testimonial.verified && <Badge variant="secondary" className="ml-auto">
+                    {testimonial.verified && <Badge variant="secondary" className="ml-auto flex-shrink-0">
                         <CheckCircle className="h-3 w-3 mr-1" />
-                        Verified
+                        <span className="hidden sm:inline">Verified</span>
+                        <span className="sm:hidden">✓</span>
                       </Badge>}
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                     "{testimonial.story}"
                   </p>
                 </CardContent>

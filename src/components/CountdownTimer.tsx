@@ -49,32 +49,32 @@ export default function CountdownTimer({ resetTimer = false, className = "" }: C
   }, [resetTimer]);
 
   return (
-    <div className={`bg-primary text-primary-foreground p-4 md:p-6 text-center ${className}`}>
-      <h3 className="text-lg md:text-xl font-bold mb-2">Limited-Time Offer Ends In:</h3>
+    <div className={`bg-primary text-primary-foreground p-3 sm:p-4 md:p-6 text-center ${className}`}>
+      <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2">Limited-Time Offer Ends In:</h3>
       
-      <div className="flex justify-center items-center gap-2 md:gap-4 mb-3">
-        <div className="bg-primary-foreground text-primary rounded-lg p-2 md:p-3 min-w-[50px] md:min-w-[60px]">
-          <div className="text-xl md:text-2xl font-bold">{timeLeft.days.toString().padStart(2, '0')}</div>
+      <div className="flex justify-center items-center gap-1 sm:gap-2 md:gap-4 mb-3">
+        <div className="bg-primary-foreground text-primary rounded-lg p-1.5 sm:p-2 md:p-3 min-w-[40px] sm:min-w-[50px] md:min-w-[60px]">
+          <div className="text-lg sm:text-xl md:text-2xl font-bold">{timeLeft.days.toString().padStart(2, '0')}</div>
           <div className="text-xs">Days</div>
         </div>
-        <span className="text-xl md:text-2xl font-bold">:</span>
-        <div className="bg-primary-foreground text-primary rounded-lg p-2 md:p-3 min-w-[50px] md:min-w-[60px]">
-          <div className="text-xl md:text-2xl font-bold">{timeLeft.hours.toString().padStart(2, '0')}</div>
+        <span className="text-lg sm:text-xl md:text-2xl font-bold">:</span>
+        <div className="bg-primary-foreground text-primary rounded-lg p-1.5 sm:p-2 md:p-3 min-w-[40px] sm:min-w-[50px] md:min-w-[60px]">
+          <div className="text-lg sm:text-xl md:text-2xl font-bold">{timeLeft.hours.toString().padStart(2, '0')}</div>
           <div className="text-xs">Hours</div>
         </div>
-        <span className="text-xl md:text-2xl font-bold">:</span>
-        <div className="bg-primary-foreground text-primary rounded-lg p-2 md:p-3 min-w-[50px] md:min-w-[60px]">
-          <div className="text-xl md:text-2xl font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</div>
+        <span className="text-lg sm:text-xl md:text-2xl font-bold">:</span>
+        <div className="bg-primary-foreground text-primary rounded-lg p-1.5 sm:p-2 md:p-3 min-w-[40px] sm:min-w-[50px] md:min-w-[60px]">
+          <div className="text-lg sm:text-xl md:text-2xl font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</div>
           <div className="text-xs">Mins</div>
         </div>
-        <span className="text-xl md:text-2xl font-bold">:</span>
-        <div className="bg-primary-foreground text-primary rounded-lg p-2 md:p-3 min-w-[50px] md:min-w-[60px]">
-          <div className="text-xl md:text-2xl font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</div>
+        <span className="text-lg sm:text-xl md:text-2xl font-bold">:</span>
+        <div className="bg-primary-foreground text-primary rounded-lg p-1.5 sm:p-2 md:p-3 min-w-[40px] sm:min-w-[50px] md:min-w-[60px]">
+          <div className="text-lg sm:text-xl md:text-2xl font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</div>
           <div className="text-xs">Secs</div>
         </div>
       </div>
       
-      <p className="text-sm md:text-base opacity-90">
+      <p className="text-xs sm:text-sm md:text-base opacity-90 px-2">
         50% off admission fee + ₹25,000 MBA Scholarship + Free Career Counseling
       </p>
     </div>
