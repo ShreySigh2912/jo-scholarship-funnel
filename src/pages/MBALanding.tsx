@@ -7,17 +7,22 @@ import CountdownTimer from '@/components/CountdownTimer';
 import { ContactForm } from '@/components/ui/component';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import FAQSection from '@/components/FAQSection';
+import MBAScholarshipQuiz from '@/components/MBAScholarshipQuiz';
 import { toast } from '@/hooks/use-toast';
 import { GraduationCap, TrendingUp, Clock, Users, Star, Award, Briefcase, Brain, BarChart, Megaphone, ChevronRight, Shield, CheckCircle, Target, Globe, BookOpen, Phone } from 'lucide-react';
 import { Icons } from '@/components/ui/icons';
+
 interface MBALandingProps {
   resetTimer?: boolean;
 }
+
 export default function MBALanding({
   resetTimer = false
 }: MBALandingProps) {
   const [showForm, setShowForm] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
   const formRef = useRef<HTMLElement>(null);
+
   const scrollToForm = () => {
     setShowForm(true);
     setTimeout(() => {
@@ -26,11 +31,20 @@ export default function MBALanding({
       });
     }, 100);
   };
+
   const handleFormSuccess = (data: { name: string; email: string; phone: string }) => {
     toast({
       title: "🎉 You've unlocked your scholarship eligibility!",
       description: "Our counselor will contact you within 24 hours to confirm your ₹25,000 scholarship."
     });
+  };
+
+  const handleQuizOpen = () => {
+    setShowQuiz(true);
+  };
+
+  const handleQuizClose = () => {
+    setShowQuiz(false);
   };
 
   // Stats data
@@ -116,7 +130,12 @@ export default function MBALanding({
     story: "Transitioned from software development to data science through the analytics specialization. Now leading a team of data scientists with 50% salary increase.",
     verified: true
   }];
-  return <div className="min-h-screen bg-background">
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Quiz Modal */}
+      {showQuiz && <MBAScholarshipQuiz onClose={handleQuizClose} />}
+
       {/* Scholarship Banner */}
       <div className="bg-secondary text-secondary-foreground py-3 px-4 text-center">
         <p className="font-semibold text-sm md:text-base">
@@ -151,7 +170,7 @@ export default function MBALanding({
         actions={[
           {
             text: "Get ₹25,000 Scholarship",
-            onClick: scrollToForm,
+            onClick: handleQuizOpen,
             variant: "default",
             icon: <GraduationCap className="h-5 w-5" />
           }
@@ -190,14 +209,16 @@ export default function MBALanding({
       <section className="py-8 bg-muted">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {stats.map((stat, index) => <div key={index}>
+            {stats.map((stat, index) => (
+              <div key={index}>
                 <div className="text-2xl md:text-3xl font-bold text-primary mb-1">
                   {stat.number}
                 </div>
                 <div className="text-sm md:text-base text-muted-foreground">
                   {stat.label}
                 </div>
-              </div>)}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -212,7 +233,8 @@ export default function MBALanding({
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {highlights.map((highlight, index) => <Card key={index} className="p-4 sm:p-6 text-center hover:shadow-lg transition-shadow">
+            {highlights.map((highlight, index) => (
+              <Card key={index} className="p-4 sm:p-6 text-center hover:shadow-lg transition-shadow">
                 <CardContent className="pt-4 sm:pt-6">
                   <highlight.icon className="h-10 w-10 sm:h-12 sm:w-12 text-primary mx-auto mb-3 sm:mb-4" />
                   <h3 className="text-lg sm:text-xl font-bold text-primary mb-2 sm:mb-3">
@@ -222,7 +244,8 @@ export default function MBALanding({
                     {highlight.description}
                   </p>
                 </CardContent>
-              </Card>)}
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -240,23 +263,29 @@ export default function MBALanding({
           </div>
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-            {electives.map((elective, index) => <Card key={index} className="p-4 sm:p-6 relative overflow-hidden">
-                {elective.isInDemand && <Badge className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-success text-success-foreground text-xs">
+            {electives.map((elective, index) => (
+              <Card key={index} className="p-4 sm:p-6 relative overflow-hidden">
+                {elective.isInDemand && (
+                  <Badge className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-success text-success-foreground text-xs">
                     In-demand
-                  </Badge>}
+                  </Badge>
+                )}
                 <CardContent className="pt-4 sm:pt-6">
                   <elective.icon className="h-10 w-10 sm:h-12 sm:w-12 text-primary mb-3 sm:mb-4" />
                   <h3 className="text-lg sm:text-xl font-bold text-primary mb-3 sm:mb-4">
                     {elective.title}
                   </h3>
                   <div className="space-y-2">
-                    {elective.skills.map((skill, skillIndex) => <div key={skillIndex} className="flex items-center gap-2 text-sm">
+                    {elective.skills.map((skill, skillIndex) => (
+                      <div key={skillIndex} className="flex items-center gap-2 text-sm">
                         <CheckCircle className="h-4 w-4 text-primary" />
                         <span>{skill}</span>
-                      </div>)}
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
-              </Card>)}
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -310,7 +339,7 @@ export default function MBALanding({
             </div>
           </Card>
 
-          <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">
+          <Button onClick={handleQuizOpen} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">
             Claim My ₹25,000 Scholarship Now
           </Button>
         </div>
@@ -329,7 +358,8 @@ export default function MBALanding({
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {testimonials.map((testimonial, index) => <Card key={index} className="p-4 sm:p-6 shadow-lg">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="p-4 sm:p-6 shadow-lg">
                 <CardContent className="pt-4 sm:pt-6">
                   <div className="flex items-start gap-3 mb-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
@@ -342,27 +372,32 @@ export default function MBALanding({
                       <p className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</p>
                       <p className="text-xs text-muted-foreground">{testimonial.company}</p>
                     </div>
-                    {testimonial.verified && <Badge variant="secondary" className="ml-auto flex-shrink-0">
+                    {testimonial.verified && (
+                      <Badge variant="secondary" className="ml-auto flex-shrink-0">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         <span className="hidden sm:inline">Verified</span>
                         <span className="sm:hidden">✓</span>
-                      </Badge>}
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                     "{testimonial.story}"
                   </p>
                 </CardContent>
-              </Card>)}
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Lead Capture Form */}
-      {showForm && <section ref={formRef} className="py-16 px-4 bg-muted">
+      {showForm && (
+        <section ref={formRef} className="py-16 px-4 bg-muted">
           <div className="container mx-auto max-w-2xl">
             <ContactForm onSubmit={handleFormSuccess} />
           </div>
-        </section>}
+        </section>
+      )}
 
       {/* FAQ Section */}
       <FAQSection />
@@ -386,5 +421,6 @@ export default function MBALanding({
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 }
