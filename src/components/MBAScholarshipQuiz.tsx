@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -11,6 +11,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { CheckCircle, Clock, Brain, BarChart3, BookOpen, Briefcase, PenTool, ChevronRight, ChevronLeft, GraduationCap, X } from 'lucide-react'
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "@/hooks/use-toast"
 
 interface MCQQuestion {
   type: 'mcq'
@@ -44,6 +46,7 @@ interface QuizData {
 
 interface MBAScholarshipQuizProps {
   onClose: () => void
+  applicationId?: string
 }
 
 const quizData: QuizData = {
@@ -328,25 +331,125 @@ const quizData: QuizData = {
   ]
 }
 
-export default function MBAScholarshipQuiz({ onClose }: MBAScholarshipQuizProps) {
+export default function MBAScholarshipQuiz({ onClose, applicationId }: MBAScholarshipQuizProps) {
   const [currentSection, setCurrentSection] = useState(0)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [isCompleted, setIsCompleted] = useState(false)
   const [showResults, setShowResults] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
   const allQuestions = quizData.sections.flatMap(section => section.questions)
   const currentQuestionData = allQuestions[currentQuestion]
   const progress = ((currentQuestion + 1) / quizData.totalQuestions) * 100
 
+  // Initialize quiz session on component mount
+  useEffect(() => {
+    const initializeQuizSession = async () => {
+      if (!applicationId) {
+        toast({
+          title: "Error",
+          description: "No application ID found. Please complete the contact form first.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      try {
+        const { data: session, error } = await supabase
+          .from('quiz_sessions')
+          .insert({
+            application_id: applicationId,
+            status: 'started'
+          })
+          .select('id')
+          .single();
+
+        if (error) {
+          console.error('Error creating quiz session:', error);
+          toast({
+            title: "Error",
+            description: "Failed to start quiz session. Please try again.",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        setSessionId(session.id);
+      } catch (error) {
+        console.error('Error initializing quiz session:', error);
+      }
+    };
+
+    initializeQuizSession();
+  }, [applicationId]);
+
+  // Save answer to Supabase
+  const saveAnswerToSupabase = async (questionId: string, answer: string | string[], questionData: Question) => {
+    if (!sessionId) return;
+
+    try {
+      const sectionIndex = quizData.sections.findIndex(section => 
+        section.questions.some(q => q.id === questionId)
+      );
+      const sectionName = sectionIndex >= 0 ? quizData.sections[sectionIndex].title : 'Unknown';
+
+      const isCorrect = questionData.type === 'mcq' && questionData.correctAnswer !== undefined
+        ? answer === questionData.options[questionData.correctAnswer]
+        : null;
+
+      const { error } = await supabase
+        .from('quiz_responses')
+        .upsert({
+          session_id: sessionId,
+          question_id: questionId,
+          question_type: questionData.type,
+          section_name: sectionName,
+          question_text: questionData.question,
+          answer: Array.isArray(answer) ? answer.join(', ') : answer,
+          is_correct: isCorrect
+        }, {
+          onConflict: 'session_id,question_id'
+        });
+
+      if (error) {
+        console.error('Error saving answer:', error);
+      }
+    } catch (error) {
+      console.error('Error saving answer to Supabase:', error);
+    }
+  };
+
   const handleAnswer = (questionId: string, answer: string | string[]) => {
     setAnswers(prev => ({
       ...prev,
       [questionId]: answer
-    }))
-  }
+    }));
 
-  const handleNext = () => {
+    // Save answer to Supabase immediately
+    const questionData = allQuestions.find(q => q.id === questionId);
+    if (questionData) {
+      saveAnswerToSupabase(questionId, answer, questionData);
+    }
+  };
+
+  const handleNext = async () => {
+    // Update quiz session progress
+    if (sessionId) {
+      try {
+        await supabase
+          .from('quiz_sessions')
+          .update({
+            current_question: currentQuestion + 1,
+            current_section: currentSection,
+            status: 'in_progress'
+          })
+          .eq('id', sessionId);
+      } catch (error) {
+        console.error('Error updating quiz progress:', error);
+      }
+    }
+
     if (currentQuestion < quizData.totalQuestions - 1) {
       setCurrentQuestion(prev => prev + 1)
       
@@ -362,7 +465,7 @@ export default function MBAScholarshipQuiz({ onClose }: MBAScholarshipQuizProps)
     } else {
       setIsCompleted(true)
     }
-  }
+  };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
@@ -397,10 +500,46 @@ export default function MBAScholarshipQuiz({ onClose }: MBAScholarshipQuizProps)
     return { correct, total, percentage: Math.round((correct / total) * 100) }
   }
 
-  const handleSubmit = () => {
-    // Redirect to thank you page instead of showing results
-    window.location.href = '/thank-you';
-  }
+  const handleSubmit = async () => {
+    if (!sessionId) {
+      toast({
+        title: "Error",
+        description: "Session not found. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Calculate final score
+      const score = calculateScore();
+
+      // Update quiz session as completed
+      await supabase
+        .from('quiz_sessions')
+        .update({
+          status: 'completed',
+          total_score: score.correct,
+          completed_at: new Date().toISOString()
+        })
+        .eq('id', sessionId);
+
+      toast({
+        title: "🎉 Quiz Completed!",
+        description: "Your responses have been saved successfully!"
+      });
+
+      // Redirect to thank you page with session info
+      window.location.href = `/thank-you?sessionId=${sessionId}`;
+    } catch (error) {
+      console.error('Error completing quiz:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit quiz. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const renderQuestion = () => {
     if (!currentQuestionData) return null

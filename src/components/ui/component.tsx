@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { User, Mail, Phone, Send } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   name: string;
@@ -16,7 +17,7 @@ interface FormData {
 
 interface ContactFormProps {
   onSubmit?: (data: FormData) => void;
-  onSuccess?: () => void;
+  onSuccess?: (applicationId: string) => void;
   className?: string;
 }
 
@@ -43,24 +44,29 @@ const LabelInputContainer = ({
   );
 };
 
-// Google Sheets submission function - temporarily disabled
-const submitToGoogleSheets = async (data: FormData) => {
-  // For now, just simulate a successful submission
-  // Replace this URL with your actual Google Apps Script Web App URL when ready
-  const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
-  
-  // Simulate successful submission for demo purposes
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  console.log('Form data would be submitted:', {
-    name: data.name,
-    email: data.email,
-    phone: data.phone,
-    timestamp: new Date().toISOString(),
-    source: 'MBA Landing Page'
-  });
-  
-  return { success: true };
+// Submit scholarship application to Supabase
+const submitScholarshipApplication = async (data: FormData): Promise<{ success: boolean; applicationId?: string }> => {
+  try {
+    const { data: application, error } = await supabase
+      .from('scholarship_applications')
+      .insert({
+        name: data.name,
+        email: data.email,
+        phone: data.phone
+      })
+      .select('id')
+      .single();
+
+    if (error) {
+      console.error('Error submitting scholarship application:', error);
+      return { success: false };
+    }
+
+    return { success: true, applicationId: application.id };
+  } catch (error) {
+    console.error('Error submitting scholarship application:', error);
+    return { success: false };
+  }
 };
 
 export function ContactForm({ onSubmit, onSuccess, className }: ContactFormProps = {}) {
@@ -106,23 +112,27 @@ export function ContactForm({ onSubmit, onSuccess, className }: ContactFormProps
     setIsSubmitting(true);
     
     try {
-      // Submit to Google Sheets
-      await submitToGoogleSheets(formData);
+      // Submit to Supabase
+      const result = await submitScholarshipApplication(formData);
       
-      // Show success message
-      toast({
-        title: "🎉 Success!",
-        description: "Your information has been submitted successfully! Redirecting to scholarship quiz...",
-      });
-      
-      // Call the onSubmit callback if provided
-      if (onSubmit) {
-        onSubmit(formData);
-      }
-      
-      // Call the onSuccess callback if provided
-      if (onSuccess) {
-        onSuccess();
+      if (result.success && result.applicationId) {
+        // Show success message
+        toast({
+          title: "🎉 Success!",
+          description: "Your information has been submitted successfully! Redirecting to scholarship quiz...",
+        });
+        
+        // Call the onSubmit callback if provided
+        if (onSubmit) {
+          onSubmit(formData);
+        }
+        
+        // Call the onSuccess callback with application ID
+        if (onSuccess) {
+          onSuccess(result.applicationId);
+        }
+      } else {
+        throw new Error('Failed to submit application');
       }
       
       // Reset form

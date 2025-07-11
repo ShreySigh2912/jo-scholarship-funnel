@@ -20,6 +20,7 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
   const [showForm, setShowForm] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [applicationId, setApplicationId] = useState<string | null>(null);
   const formRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
 
@@ -42,21 +43,22 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
     }, 1500);
   };
 
-  const handleQuizRedirect = () => {
+  const handleQuizRedirect = (appId: string) => {
     setFormSubmitted(true);
+    setApplicationId(appId);
     toast({
       title: "🎉 You've unlocked your scholarship eligibility!",
       description: "Redirecting to scholarship quiz..."
     });
     
-    // Navigate to quiz page after short delay
+    // Navigate to quiz page with application ID after short delay
     setTimeout(() => {
-      navigate('/quiz');
+      navigate(`/quiz?applicationId=${appId}`);
     }, 1500);
   };
 
   if (showQuiz) {
-    return <MBAScholarshipQuiz onClose={() => setShowQuiz(false)} />;
+    return <MBAScholarshipQuiz onClose={() => setShowQuiz(false)} applicationId={applicationId} />;
   }
 
   const containerStyle = {

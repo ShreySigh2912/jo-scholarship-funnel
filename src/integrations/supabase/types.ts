@@ -14,7 +14,118 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      quiz_responses: {
+        Row: {
+          answer: string
+          answered_at: string
+          id: string
+          is_correct: boolean | null
+          question_id: string
+          question_text: string
+          question_type: string
+          section_name: string
+          session_id: string
+        }
+        Insert: {
+          answer: string
+          answered_at?: string
+          id?: string
+          is_correct?: boolean | null
+          question_id: string
+          question_text: string
+          question_type: string
+          section_name: string
+          session_id: string
+        }
+        Update: {
+          answer?: string
+          answered_at?: string
+          id?: string
+          is_correct?: boolean | null
+          question_id?: string
+          question_text?: string
+          question_type?: string
+          section_name?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_responses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_sessions: {
+        Row: {
+          application_id: string
+          completed_at: string | null
+          current_question: number
+          current_section: number
+          id: string
+          started_at: string
+          status: string
+          total_score: number
+        }
+        Insert: {
+          application_id: string
+          completed_at?: string | null
+          current_question?: number
+          current_section?: number
+          id?: string
+          started_at?: string
+          status?: string
+          total_score?: number
+        }
+        Update: {
+          application_id?: string
+          completed_at?: string | null
+          current_question?: number
+          current_section?: number
+          id?: string
+          started_at?: string
+          status?: string
+          total_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_sessions_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "scholarship_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scholarship_applications: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
