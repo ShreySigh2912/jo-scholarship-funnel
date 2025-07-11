@@ -35,8 +35,13 @@ export default function MBALanding({
   const handleFormSuccess = (data: { name: string; email: string; phone: string }) => {
     toast({
       title: "🎉 You've unlocked your scholarship eligibility!",
-      description: "Our counselor will contact you within 24 hours to confirm your ₹25,000 scholarship."
+      description: "Starting your scholarship quiz now..."
     });
+    
+    // Open quiz after short delay
+    setTimeout(() => {
+      setShowQuiz(true);
+    }, 1500);
   };
 
   const handleQuizOpen = () => {
@@ -397,7 +402,7 @@ export default function MBALanding({
       {showForm && (
         <section ref={formRef} className="py-16 px-4 bg-muted">
           <div className="container mx-auto max-w-2xl">
-            <ContactForm onSubmit={handleFormSuccess} />
+            <ContactForm onSubmit={handleFormSuccess} onSuccess={handleFormSuccess} />
           </div>
         </section>
       )}

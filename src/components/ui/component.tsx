@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -17,6 +16,7 @@ interface FormData {
 
 interface ContactFormProps {
   onSubmit?: (data: FormData) => void;
+  onSuccess?: () => void;
   className?: string;
 }
 
@@ -74,7 +74,7 @@ const submitToGoogleSheets = async (data: FormData) => {
   }
 };
 
-export function ContactForm({ onSubmit, className }: ContactFormProps = {}) {
+export function ContactForm({ onSubmit, onSuccess, className }: ContactFormProps = {}) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -123,12 +123,17 @@ export function ContactForm({ onSubmit, className }: ContactFormProps = {}) {
       // Show success message
       toast({
         title: "🎉 Success!",
-        description: "Your information has been submitted successfully! Our counselor will contact you within 24 hours.",
+        description: "Your information has been submitted successfully! Redirecting to scholarship quiz...",
       });
       
       // Call the onSubmit callback if provided
       if (onSubmit) {
         onSubmit(formData);
+      }
+      
+      // Call the onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess();
       }
       
       // Reset form
