@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +19,9 @@ interface MBALandingProps {
 const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
   const [showForm, setShowForm] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const formRef = useRef<HTMLElement>(null);
+  const navigate = useNavigate();
 
   const scrollToForm = () => {
     setShowForm(true);
@@ -40,14 +43,15 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
   };
 
   const handleQuizRedirect = () => {
+    setFormSubmitted(true);
     toast({
       title: "🎉 You've unlocked your scholarship eligibility!",
-      description: "Starting your scholarship quiz now..."
+      description: "Redirecting to scholarship quiz..."
     });
     
-    // Open quiz after short delay
+    // Navigate to quiz page after short delay
     setTimeout(() => {
-      setShowQuiz(true);
+      navigate('/quiz');
     }, 1500);
   };
 
@@ -113,14 +117,16 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
               <Trophy className="mr-2 h-5 w-5" />
               Claim ₹25,000 Scholarship
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="text-lg px-8 py-6 border-2 hover:bg-muted"
-              onClick={scrollToForm}
-            >
-              Download Brochure
-            </Button>
+            {!formSubmitted && (
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="text-lg px-8 py-6 border-2 hover:bg-muted"
+                onClick={scrollToForm}
+              >
+                Download Brochure
+              </Button>
+            )}
           </div>
 
           {/* Countdown Timer */}
