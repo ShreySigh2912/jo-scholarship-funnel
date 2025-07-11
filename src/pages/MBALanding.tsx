@@ -170,7 +170,7 @@ export default function MBALanding({
         actions={[
           {
             text: "Get ₹25,000 Scholarship",
-            onClick: handleQuizOpen,
+            onClick: scrollToForm,
             variant: "default",
             icon: <GraduationCap className="h-5 w-5" />
           }
@@ -339,7 +339,7 @@ export default function MBALanding({
             </div>
           </Card>
 
-          <Button onClick={handleQuizOpen} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">
+          <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">
             Claim My ₹25,000 Scholarship Now
           </Button>
         </div>

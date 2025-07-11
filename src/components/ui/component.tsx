@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { User, Mail, Phone, Send } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 interface FormData {
   name: string;
@@ -39,6 +41,37 @@ const LabelInputContainer = ({
       {children}
     </div>
   );
+};
+
+// Google Sheets submission function
+const submitToGoogleSheets = async (data: FormData) => {
+  // Replace this URL with your Google Apps Script Web App URL
+  const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+  
+  try {
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        timestamp: new Date().toISOString(),
+        source: 'MBA Landing Page'
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit to Google Sheets');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Google Sheets submission error:', error);
+    throw error;
+  }
 };
 
 export function ContactForm({ onSubmit, className }: ContactFormProps = {}) {
@@ -84,14 +117,18 @@ export function ContactForm({ onSubmit, className }: ContactFormProps = {}) {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Submit to Google Sheets
+      await submitToGoogleSheets(formData);
       
+      // Show success message
+      toast({
+        title: "🎉 Success!",
+        description: "Your information has been submitted successfully! Our counselor will contact you within 24 hours.",
+      });
+      
+      // Call the onSubmit callback if provided
       if (onSubmit) {
         onSubmit(formData);
-      } else {
-        console.log("Form submitted:", formData);
-        alert("Form submitted successfully!");
       }
       
       // Reset form
@@ -99,6 +136,11 @@ export function ContactForm({ onSubmit, className }: ContactFormProps = {}) {
       setErrors({});
     } catch (error) {
       console.error("Submission error:", error);
+      toast({
+        title: "Error",
+        description: "There was an error submitting your information. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
