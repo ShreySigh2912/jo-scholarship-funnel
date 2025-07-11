@@ -43,35 +43,24 @@ const LabelInputContainer = ({
   );
 };
 
-// Google Sheets submission function
+// Google Sheets submission function - temporarily disabled
 const submitToGoogleSheets = async (data: FormData) => {
-  // Replace this URL with your Google Apps Script Web App URL
+  // For now, just simulate a successful submission
+  // Replace this URL with your actual Google Apps Script Web App URL when ready
   const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
   
-  try {
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        timestamp: new Date().toISOString(),
-        source: 'MBA Landing Page'
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to submit to Google Sheets');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Google Sheets submission error:', error);
-    throw error;
-  }
+  // Simulate successful submission for demo purposes
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  console.log('Form data would be submitted:', {
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    timestamp: new Date().toISOString(),
+    source: 'MBA Landing Page'
+  });
+  
+  return { success: true };
 };
 
 export function ContactForm({ onSubmit, onSuccess, className }: ContactFormProps = {}) {
