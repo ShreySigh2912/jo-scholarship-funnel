@@ -146,9 +146,12 @@ export default function MBALanding({
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <span className="text-xl md:text-2xl font-bold text-primary">JAIN Online</span>
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/65c29d74-8bde-48c2-b6ea-9e131750e865.png" 
+              alt="JAIN Online University" 
+              className="h-12 md:h-14"
+            />
           </div>
           <Button onClick={scrollToForm} className="hidden md:flex">
             Apply Now
@@ -408,9 +411,12 @@ export default function MBALanding({
       {/* Footer */}
       <footer className="bg-primary text-primary-foreground py-8 px-4">
         <div className="container mx-auto max-w-6xl text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <GraduationCap className="h-6 w-6" />
-            <span className="text-xl font-bold">JAIN Online</span>
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src="/lovable-uploads/65c29d74-8bde-48c2-b6ea-9e131750e865.png" 
+              alt="JAIN Online University" 
+              className="h-8"
+            />
           </div>
           <p className="text-sm opacity-90 mb-4">
             Transforming careers through quality education since 1990
