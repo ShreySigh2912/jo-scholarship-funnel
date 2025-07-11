@@ -398,7 +398,8 @@ export default function MBAScholarshipQuiz({ onClose }: MBAScholarshipQuizProps)
   }
 
   const handleSubmit = () => {
-    setShowResults(true)
+    // Redirect to thank you page instead of showing results
+    window.location.href = '/thank-you';
   }
 
   const renderQuestion = () => {
