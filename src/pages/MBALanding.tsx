@@ -464,7 +464,7 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
       )}
 
       {/* Sticky Mobile CTA */}
-      <StickyMobileCTA onCtaClick={scrollToForm} />
+      <StickyMobileCTA onClick={scrollToForm} />
     </div>
   );
 };
