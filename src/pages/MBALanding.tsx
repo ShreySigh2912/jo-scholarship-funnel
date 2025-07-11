@@ -6,9 +6,9 @@ import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Trophy, GraduationCap, Award, Clock, Users, Star, TrendingUp, BarChart3, BookOpen, Target, Zap, Calendar, MapPin, Phone, Mail } from 'lucide-react';
 import { ContactForm } from '@/components/ui/component';
 import MBAScholarshipQuiz from '@/components/MBAScholarshipQuiz';
-import { FAQSection } from '@/components/FAQSection';
-import { CountdownTimer } from '@/components/CountdownTimer';
-import { StickyMobileCTA } from '@/components/StickyMobileCTA';
+import FAQSection from '@/components/FAQSection';
+import CountdownTimer from '@/components/CountdownTimer';
+import StickyMobileCTA from '@/components/StickyMobileCTA';
 import { toast } from '@/hooks/use-toast';
 
 interface MBALandingProps {
