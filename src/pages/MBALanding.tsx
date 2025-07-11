@@ -1,25 +1,21 @@
-
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { HeroSection } from '@/components/ui/hero-section';
-import CountdownTimer from '@/components/CountdownTimer';
+import { Separator } from '@/components/ui/separator';
+import { CheckCircle, Trophy, GraduationCap, Award, Clock, Users, Star, TrendingUp, BarChart3, BookOpen, Target, Zap, Calendar, MapPin, Phone, Mail } from 'lucide-react';
 import { ContactForm } from '@/components/ui/component';
-import StickyMobileCTA from '@/components/StickyMobileCTA';
-import FAQSection from '@/components/FAQSection';
 import MBAScholarshipQuiz from '@/components/MBAScholarshipQuiz';
+import { FAQSection } from '@/components/FAQSection';
+import { CountdownTimer } from '@/components/CountdownTimer';
+import { StickyMobileCTA } from '@/components/StickyMobileCTA';
 import { toast } from '@/hooks/use-toast';
-import { GraduationCap, TrendingUp, Clock, Users, Star, Award, Briefcase, Brain, BarChart, Megaphone, ChevronRight, Shield, CheckCircle, Target, Globe, BookOpen, Phone } from 'lucide-react';
-import { Icons } from '@/components/ui/icons';
 
 interface MBALandingProps {
   resetTimer?: boolean;
 }
 
-export default function MBALanding({
-  resetTimer = false
-}: MBALandingProps) {
+const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
   const [showForm, setShowForm] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const formRef = useRef<HTMLElement>(null);
@@ -27,9 +23,7 @@ export default function MBALanding({
   const scrollToForm = () => {
     setShowForm(true);
     setTimeout(() => {
-      formRef.current?.scrollIntoView({
-        behavior: 'smooth'
-      });
+      formRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
 
@@ -57,361 +51,410 @@ export default function MBALanding({
     }, 1500);
   };
 
-  const handleQuizOpen = () => {
-    setShowQuiz(true);
+  if (showQuiz) {
+    return <MBAScholarshipQuiz onClose={() => setShowQuiz(false)} />;
+  }
+
+  const containerStyle = {
+    backgroundImage: 'url("/bg-pattern-3.svg")',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   };
-
-  const handleQuizClose = () => {
-    setShowQuiz(false);
-  };
-
-  // Stats data
-  const stats = [{
-    number: "10,000+",
-    label: "Alumni"
-  }, {
-    number: "4.8/5",
-    label: "Rating"
-  }, {
-    number: "₹2.5L",
-    label: "Avg Hike"
-  }, {
-    number: "85%",
-    label: "Placement Success"
-  }];
-
-  // Program highlights
-  const highlights = [{
-    icon: Target,
-    title: "Career-Focused Curriculum",
-    description: "95% job relevance with industry-aligned courses"
-  }, {
-    icon: Clock,
-    title: "Flexible Learning",
-    description: "Study anytime, anywhere at your own pace"
-  }, {
-    icon: Users,
-    title: "Placement Support",
-    description: "85% placement rate with dedicated career support"
-  }, {
-    icon: Award,
-    title: "Industry Recognition",
-    description: "NAAC A+ rating and UGC-DEB approved"
-  }, {
-    icon: BookOpen,
-    title: "Expert Faculty",
-    description: "20+ years average industry experience"
-  }, {
-    icon: TrendingUp,
-    title: "Proven ROI",
-    description: "₹2.5L+ average salary hike for graduates"
-  }];
-
-  // Future-ready electives
-  const electives = [{
-    icon: Brain,
-    title: "Artificial Intelligence",
-    skills: ["Fundamentals", "Generative AI", "Applied AI", "Algorithms"],
-    isInDemand: true
-  }, {
-    icon: BarChart,
-    title: "Data Science & Business Analytics",
-    skills: ["Python", "SQL", "Analytics", "Visualization", "AI for Business"],
-    isInDemand: true
-  }, {
-    icon: Megaphone,
-    title: "Digital Marketing & E-Commerce",
-    skills: ["Inbound/Outbound Marketing", "Brand Strategy", "Product Strategy", "Growth Strategy"],
-    isInDemand: true
-  }];
-
-  // Success stories
-  const testimonials = [{
-    name: "Merin Anns Mathew",
-    role: "Senior Accountant",
-    company: "Global Corp",
-    image: "/placeholder.svg",
-    story: "JAIN Online MBA helped me advance my accounting career. I got promoted to Senior Accountant with a 35% salary hike within 6 months of graduation.",
-    verified: true
-  }, {
-    name: "Madhuri Sandeep",
-    role: "Startup Founder",
-    company: "TechStart Solutions",
-    image: "/placeholder.svg",
-    story: "The entrepreneurship and business strategy modules gave me the confidence to expand my startup. We're now a team of 25 with 3x revenue growth.",
-    verified: true
-  }, {
-    name: "Karthik Rajendran",
-    role: "Data Science Manager",
-    company: "Analytics Pro",
-    image: "/placeholder.svg",
-    story: "Transitioned from software development to data science through the analytics specialization. Now leading a team of data scientists with 50% salary increase.",
-    verified: true
-  }];
-
+  
   return (
     <div className="min-h-screen bg-background">
-      {/* Quiz Modal */}
-      {showQuiz && <MBAScholarshipQuiz onClose={handleQuizClose} />}
-
-      {/* Scholarship Banner */}
-      <div className="bg-secondary text-secondary-foreground py-3 px-4 text-center">
-        <p className="font-semibold text-sm md:text-base">
-          🎓 Get ₹25,000 Scholarship – Limited Time | Apply via Consultation
-        </p>
-      </div>
-
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/65c29d74-8bde-48c2-b6ea-9e131750e865.png" 
-              alt="JAIN Online University" 
-              className="h-12 md:h-14"
-            />
-          </div>
-          <Button onClick={scrollToForm} className="hidden md:flex">
-            Apply Now
-          </Button>
-        </div>
-      </header>
-
       {/* Hero Section */}
-      <HeroSection
-        badge={{
-          text: "🎓 Get ₹25,000 Scholarship – Limited Time",
-          action: {
-            text: "Apply via Consultation",
-            onClick: scrollToForm
-          }
-        }}
-        title="Future-Proof MBA – 100% Online"
-        description="Advance your career without quitting your job"
-        actions={[
-          {
-            text: "Get ₹25,000 Scholarship",
-            onClick: scrollToForm,
-            variant: "default",
-            icon: <GraduationCap className="h-5 w-5" />
-          }
-        ]}
-      >
-        {/* Hero Benefits Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8 w-full max-w-4xl">
-          <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20">
-            <CardContent className="pt-4 sm:pt-6 text-center">
-              <TrendingUp className="h-8 w-8 sm:h-10 sm:w-10 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold text-primary mb-2">Career Growth</h3>
-              <p className="text-sm text-muted-foreground">12% Average Salary Hike</p>
-            </CardContent>
-          </Card>
-          <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20">
-            <CardContent className="pt-4 sm:pt-6 text-center">
-              <Clock className="h-8 w-8 sm:h-10 sm:w-10 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold text-primary mb-2">Work-Life Balance</h3>
-              <p className="text-sm text-muted-foreground">Flexible Timings</p>
-            </CardContent>
-          </Card>
-          <Card className="p-4 sm:p-6 shadow-lg border-2 border-primary/20 sm:col-span-2 lg:col-span-1">
-            <CardContent className="pt-4 sm:pt-6 text-center">
-              <Award className="h-8 w-8 sm:h-10 sm:w-10 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold text-primary mb-2">Industry Connect</h3>
-              <p className="text-sm text-muted-foreground">Industry Recognized Degree</p>
-            </CardContent>
-          </Card>
-        </div>
-      </HeroSection>
-
-      {/* Countdown Timer */}
-      <CountdownTimer resetTimer={resetTimer} className="sticky top-16 z-30" />
-
-      {/* Stats Bar */}
-      <section className="py-8 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {stats.map((stat, index) => (
-              <div key={index}>
-                <div className="text-2xl md:text-3xl font-bold text-primary mb-1">
-                  {stat.number}
-                </div>
-                <div className="text-sm md:text-base text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 py-20 px-4">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="container mx-auto text-center relative z-10">
+          {/* Announcement Bar */}
+          <div className="mb-8">
+            <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm font-medium">
+              🎉 Limited Time: ₹25,000 Scholarship Available!
+            </Badge>
           </div>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
+            Transform Your Career with
+            <span className="text-primary block mt-2">JAIN Online MBA</span>
+          </h1>
+          
+          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+            100% Online • Flexible Timings • Industry-Recognized Degree • Placement Support
+          </p>
+
+          {/* Key Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-primary">15+</div>
+              <div className="text-sm text-muted-foreground">Specializations</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-primary">50K+</div>
+              <div className="text-sm text-muted-foreground">Alumni Network</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-primary">85%</div>
+              <div className="text-sm text-muted-foreground">Placement Rate</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-primary">₹8.5L</div>
+              <div className="text-sm text-muted-foreground">Avg. Salary</div>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
+            <Button 
+              size="lg" 
+              className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-200"
+              onClick={scrollToForm}
+            >
+              <Trophy className="mr-2 h-5 w-5" />
+              Claim ₹25,000 Scholarship
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="text-lg px-8 py-6 border-2 hover:bg-muted"
+              onClick={scrollToForm}
+            >
+              Download Brochure
+            </Button>
+          </div>
+
+          {/* Countdown Timer */}
+          <CountdownTimer resetTimer={resetTimer} />
         </div>
       </section>
 
       {/* Program Highlights */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto max-w-6xl">
+      <section className="py-16 px-4 bg-muted/30">
+        <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Why Our MBA Program Stands Out
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Why Choose JAIN Online MBA?
             </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Designed for working professionals who want to accelerate their career growth
+            </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {highlights.map((highlight, index) => (
-              <Card key={index} className="p-4 sm:p-6 text-center hover:shadow-lg transition-shadow">
-                <CardContent className="pt-4 sm:pt-6">
-                  <highlight.icon className="h-10 w-10 sm:h-12 sm:w-12 text-primary mx-auto mb-3 sm:mb-4" />
-                  <h3 className="text-lg sm:text-xl font-bold text-primary mb-2 sm:mb-3">
-                    {highlight.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground">
-                    {highlight.description}
-                  </p>
-                </CardContent>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <GraduationCap className="h-8 w-8 text-primary" />,
+                title: "100% Online Learning",
+                description: "Study anytime, anywhere with our flexible online platform"
+              },
+              {
+                icon: <Award className="h-8 w-8 text-primary" />,
+                title: "UGC Recognized",
+                description: "Fully accredited degree recognized by employers globally"
+              },
+              {
+                icon: <Users className="h-8 w-8 text-primary" />,
+                title: "Expert Faculty",
+                description: "Learn from industry veterans and academic experts"
+              },
+              {
+                icon: <TrendingUp className="h-8 w-8 text-primary" />,
+                title: "Career Growth",
+                description: "85% of our graduates get promoted within 6 months"
+              },
+              {
+                icon: <Target className="h-8 w-8 text-primary" />,
+                title: "Placement Support",
+                description: "Dedicated placement cell with 500+ hiring partners"
+              },
+              {
+                icon: <Zap className="h-8 w-8 text-primary" />,
+                title: "Fast Track Option",
+                description: "Complete your MBA in 12-24 months"
+              }
+            ].map((feature, index) => (
+              <Card key={index} className="text-center p-6 border-border hover:shadow-lg transition-all duration-300">
+                <div className="mb-4 flex justify-center">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Future-Ready Electives */}
-      <section className="py-16 px-4 bg-muted">
-        <div className="container mx-auto max-w-6xl">
+      {/* Specializations */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Future-Ready Electives
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Choose Your Specialization
             </h2>
             <p className="text-lg text-muted-foreground">
-              Become job ready with electives crafted by industry experts.
+              15+ specializations designed for today's business landscape
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-            {electives.map((elective, index) => (
-              <Card key={index} className="p-4 sm:p-6 relative overflow-hidden">
-                {elective.isInDemand && (
-                  <Badge className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-success text-success-foreground text-xs">
-                    In-demand
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {[
+              { name: "Marketing", icon: <BarChart3 className="h-5 w-5" /> },
+              { name: "Finance", icon: <TrendingUp className="h-5 w-5" /> },
+              { name: "HR Management", icon: <Users className="h-5 w-5" /> },
+              { name: "Business Analytics", icon: <BarChart3 className="h-5 w-5" /> },
+              { name: "Digital Marketing", icon: <Zap className="h-5 w-5" /> },
+              { name: "Operations", icon: <Target className="h-5 w-5" /> },
+              { name: "International Business", icon: <Trophy className="h-5 w-5" /> },
+              { name: "Entrepreneurship", icon: <Star className="h-5 w-5" /> },
+              { name: "Project Management", icon: <CheckCircle className="h-5 w-5" /> },
+              { name: "Supply Chain", icon: <BookOpen className="h-5 w-5" /> }
+            ].map((spec, index) => (
+              <Badge 
+                key={index} 
+                variant="outline" 
+                className="p-3 justify-center border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 cursor-pointer"
+              >
+                <span className="mr-2">{spec.icon}</span>
+                {spec.name}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Success Stories */}
+      <section className="py-16 px-4 bg-muted/30">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Success Stories
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Real transformations from our alumni
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Priya Sharma",
+                role: "Senior Manager → Director",
+                company: "TCS",
+                growth: "65% salary increase",
+                image: "👩‍💼"
+              },
+              {
+                name: "Rahul Kumar",
+                role: "Team Lead → VP Marketing",
+                company: "Wipro",
+                growth: "80% salary increase",
+                image: "👨‍💼"
+              },
+              {
+                name: "Anita Patel",
+                role: "Executive → Head of Operations",
+                company: "Infosys",
+                growth: "75% salary increase",
+                image: "👩‍💼"
+              }
+            ].map((story, index) => (
+              <Card key={index} className="p-6 border-border">
+                <div className="text-center mb-4">
+                  <div className="text-4xl mb-2">{story.image}</div>
+                  <h3 className="text-xl font-semibold text-foreground">{story.name}</h3>
+                  <p className="text-muted-foreground">{story.role}</p>
+                  <p className="text-sm text-primary font-medium">{story.company}</p>
+                </div>
+                <div className="text-center">
+                  <Badge className="bg-green-100 text-green-800 border-green-200">
+                    {story.growth}
                   </Badge>
-                )}
-                <CardContent className="pt-4 sm:pt-6">
-                  <elective.icon className="h-10 w-10 sm:h-12 sm:w-12 text-primary mb-3 sm:mb-4" />
-                  <h3 className="text-lg sm:text-xl font-bold text-primary mb-3 sm:mb-4">
-                    {elective.title}
-                  </h3>
-                  <div className="space-y-2">
-                    {elective.skills.map((skill, skillIndex) => (
-                      <div key={skillIndex} className="flex items-center gap-2 text-sm">
-                        <CheckCircle className="h-4 w-4 text-primary" />
-                        <span>{skill}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
+                </div>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Program Details */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Designed for Working Professionals
+              </h2>
+              <div className="space-y-6">
+                {[
+                  {
+                    icon: <Clock className="h-6 w-6 text-primary" />,
+                    title: "Flexible Schedule",
+                    description: "Weekend classes & recorded sessions available 24/7"
+                  },
+                  {
+                    icon: <BookOpen className="h-6 w-6 text-primary" />,
+                    title: "Industry-Relevant Curriculum",
+                    description: "Updated syllabus with latest business trends & case studies"
+                  },
+                  {
+                    icon: <Users className="h-6 w-6 text-primary" />,
+                    title: "Peer Learning",
+                    description: "Network with 1000+ professionals from diverse industries"
+                  },
+                  {
+                    icon: <Award className="h-6 w-6 text-primary" />,
+                    title: "Industry Projects",
+                    description: "Work on live projects with leading companies"
+                  }
+                ].map((feature, index) => (
+                  <div key={index} className="flex gap-4">
+                    <div className="flex-shrink-0">
+                      {feature.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
+                      <p className="text-muted-foreground">{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-primary/10 to-secondary/10 p-8 rounded-2xl">
+              <h3 className="text-2xl font-bold text-foreground mb-6">Program Highlights</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Duration</span>
+                  <span className="text-foreground font-medium">12-24 Months</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Format</span>
+                  <span className="text-foreground font-medium">100% Online</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Classes</span>
+                  <span className="text-foreground font-medium">Weekends</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Fee</span>
+                  <span className="text-foreground font-medium">₹2.5L - ₹25K Scholarship</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Placement Support</span>
+                  <span className="text-foreground font-medium">Lifetime</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Scholarship Section */}
-      <section className="py-16 px-4 bg-scholarship border-t border-scholarship-border">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="bg-secondary text-secondary-foreground inline-block px-6 py-2 rounded-full mb-6">
-            <Star className="inline mr-2 h-5 w-5" />
-            Scholarship Program
-          </div>
-          
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
-            Unlock Your MBA Dreams with a ₹25,000 Scholarship
-          </h2>
-          
-          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-            We believe finances shouldn't stop you from upgrading your career. 
-            Limited scholarships now available for eligible learners. Apply now through your free consultation call.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
-            <div className="bg-background p-3 md:p-4 rounded-lg border">
-              <div className="font-semibold text-primary text-sm md:text-base">1. Test</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Quick eligibility assessment</div>
-            </div>
-            <div className="bg-background p-3 md:p-4 rounded-lg border">
-              <div className="font-semibold text-primary text-sm md:text-base">2. Result</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Scholarship confirmation</div>
-            </div>
-            <div className="bg-background p-3 md:p-4 rounded-lg border">
-              <div className="font-semibold text-primary text-sm md:text-base">3. Pay ₹5000</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Booking amount</div>
-            </div>
-            <div className="bg-background p-3 md:p-4 rounded-lg border">
-              <div className="font-semibold text-primary text-sm md:text-base">4. Enroll</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Start your MBA journey</div>
-            </div>
-          </div>
-
-          <Card className="p-4 sm:p-6 mb-6 md:mb-8 bg-background border-l-4 border-l-primary">
-            <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-              <div className="text-left">
-                <h4 className="font-semibold text-primary mb-2 text-sm sm:text-base">Is the scholarship real?</h4>
-                <p className="text-muted-foreground text-sm sm:text-base">
-                  Yes, absolutely! This is a merit-based scholarship for qualified candidates. 
-                  During your consultation, our counselor will assess your profile and confirm eligibility.
-                </p>
+      <section className="py-16 px-4 bg-gradient-to-r from-primary/10 via-background to-secondary/10">
+        <div className="container mx-auto text-center">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+              ₹25,000 Scholarship Program
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Limited scholarships available for deserving candidates. Apply now to secure your spot!
+            </p>
+            
+            <Card className="p-8 bg-card border-2 border-primary/20 shadow-lg">
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-2">100</div>
+                  <div className="text-sm text-muted-foreground">Scholarships Available</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-2">₹25,000</div>
+                  <div className="text-sm text-muted-foreground">Maximum Scholarship</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-2">Merit</div>
+                  <div className="text-sm text-muted-foreground">Based Selection</div>
+                </div>
               </div>
-            </div>
-          </Card>
-
-          <Button onClick={scrollToForm} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl shadow-lg w-full sm:w-auto">
-            Claim My ₹25,000 Scholarship Now
-          </Button>
+              
+              <div className="space-y-4 text-left max-w-2xl mx-auto">
+                <h3 className="text-xl font-semibold text-foreground">Scholarship Criteria:</h3>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    Minimum 60% in graduation
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    2+ years of work experience
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    Clear scholarship aptitude test
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    Demonstrate leadership potential
+                  </li>
+                </ul>
+              </div>
+              
+              <Button 
+                size="lg" 
+                className="mt-8 text-lg px-8 py-6"
+                onClick={scrollToForm}
+              >
+                Apply for Scholarship
+              </Button>
+            </Card>
+          </div>
         </div>
       </section>
 
-      {/* Success Stories */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto max-w-6xl">
+      {/* FAQ Section */}
+      <FAQSection />
+
+      {/* Contact Section */}
+      <section className="py-16 px-4 bg-muted/30">
+        <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Success Stories from Our Alumni
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Still Have Questions?
             </h2>
             <p className="text-lg text-muted-foreground">
-              Real stories from real students who transformed their careers
+              Our counselors are here to help you make the right decision
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="p-4 sm:p-6 shadow-lg">
-                <CardContent className="pt-4 sm:pt-6">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="font-semibold text-primary text-sm sm:text-base">
-                        {testimonial.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-primary text-sm sm:text-base">{testimonial.name}</h4>
-                      <p className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</p>
-                      <p className="text-xs text-muted-foreground">{testimonial.company}</p>
-                    </div>
-                    {testimonial.verified && (
-                      <Badge variant="secondary" className="ml-auto flex-shrink-0">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        <span className="hidden sm:inline">Verified</span>
-                        <span className="sm:hidden">✓</span>
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                    "{testimonial.story}"
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <Card className="text-center p-6 border-border">
+              <Phone className="h-8 w-8 text-primary mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Call Us</h3>
+              <p className="text-muted-foreground mb-3">Mon-Sat, 9 AM - 7 PM</p>
+              <Button variant="outline" size="sm">1800-102-4431</Button>
+            </Card>
+
+            <Card className="text-center p-6 border-border">
+              <Mail className="h-8 w-8 text-primary mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Email Us</h3>
+              <p className="text-muted-foreground mb-3">Quick response guaranteed</p>
+              <Button variant="outline" size="sm">admissions@jainuniversity.ac.in</Button>
+            </Card>
+
+            <Card className="text-center p-6 border-border">
+              <MapPin className="h-8 w-8 text-primary mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Visit Us</h3>
+              <p className="text-muted-foreground mb-3">Bangalore Campus</p>
+              <Button variant="outline" size="sm">Get Directions</Button>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Lead Capture Form */}
+      {/* Contact Form */}
       {showForm && (
         <section ref={formRef} className="py-16 px-4 bg-muted">
           <div className="container mx-auto max-w-2xl">
@@ -420,31 +463,10 @@ export default function MBALanding({
         </section>
       )}
 
-      {/* FAQ Section */}
-      <FAQSection />
-
       {/* Sticky Mobile CTA */}
-      <StickyMobileCTA onClick={scrollToForm} />
-
-      {/* Footer */}
-      <footer className="bg-primary text-primary-foreground py-8 px-4">
-        <div className="container mx-auto max-w-6xl text-center">
-          <div className="flex items-center justify-center mb-4">
-            <img 
-              src="/lovable-uploads/65c29d74-8bde-48c2-b6ea-9e131750e865.png" 
-              alt="JAIN Online University" 
-              className="h-8"
-            />
-          </div>
-          <p className="text-sm opacity-90 mb-4">
-            Transforming careers through quality education since 1990
-          </p>
-          <div className="flex justify-center items-center gap-4 text-sm">
-            <span>📞 1800-123-4567</span>
-            <span>✉️ info@jainonline.ac.in</span>
-          </div>
-        </div>
-      </footer>
+      <StickyMobileCTA onCtaClick={scrollToForm} />
     </div>
   );
-}
+};
+
+export default MBALanding;
