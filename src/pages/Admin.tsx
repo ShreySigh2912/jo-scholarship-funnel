@@ -53,36 +53,44 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
-      // Fetch scholarship applications
-      const { data: applicationsData, error: applicationsError } = await supabase
-        .from('scholarship_applications')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Fetch both applications and sessions in parallel for better performance
+      const [applicationsResult, sessionsResult] = await Promise.all([
+        supabase
+          .from('scholarship_applications')
+          .select('*')
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('quiz_sessions')
+          .select('*')
+          .order('started_at', { ascending: false })
+      ]);
 
-      if (applicationsError) throw applicationsError;
+      if (applicationsResult.error) {
+        console.error('Error fetching applications:', applicationsResult.error);
+        setApplications([]);
+      } else {
+        setApplications(applicationsResult.data || []);
+      }
 
-      // Fetch quiz sessions
-      const { data: sessionsData, error: sessionsError } = await supabase
-        .from('quiz_sessions')
-        .select('*')
-        .order('started_at', { ascending: false });
-
-      if (sessionsError) throw sessionsError;
-
-      setApplications(applicationsData || []);
-      
-      // Map quiz sessions to include applicant name from applications data
-      const sessionsWithNames = sessionsData?.map(session => {
-        const application = applicationsData?.find(app => app.id === session.application_id);
-        return {
-          ...session,
-          applicant_name: application?.name || 'Unknown'
-        };
-      }) || [];
-      
-      setQuizSessions(sessionsWithNames);
+      if (sessionsResult.error) {
+        console.error('Error fetching sessions:', sessionsResult.error);
+        setQuizSessions([]);
+      } else {
+        // Map quiz sessions to include applicant name from applications data
+        const sessionsWithNames = sessionsResult.data?.map(session => {
+          const application = applicationsResult.data?.find(app => app.id === session.application_id);
+          return {
+            ...session,
+            applicant_name: application?.name || 'Unknown'
+          };
+        }) || [];
+        
+        setQuizSessions(sessionsWithNames);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
+      setApplications([]);
+      setQuizSessions([]);
     } finally {
       setLoading(false);
     }
