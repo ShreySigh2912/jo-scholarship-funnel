@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      application_links: {
+        Row: {
+          application_id: string
+          clicked: boolean | null
+          clicked_at: string | null
+          created_at: string
+          email: string
+          id: string
+          tracking_token: string
+        }
+        Insert: {
+          application_id: string
+          clicked?: boolean | null
+          clicked_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          tracking_token: string
+        }
+        Update: {
+          application_id?: string
+          clicked?: boolean | null
+          clicked_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          tracking_token?: string
+        }
+        Relationships: []
+      }
+      email_sequences: {
+        Row: {
+          application_id: string
+          created_at: string
+          email: string
+          id: string
+          last_email_sent_at: string | null
+          link_clicked: boolean | null
+          link_clicked_at: string | null
+          name: string
+          sequence_stage: number
+          test_completed_at: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          email: string
+          id?: string
+          last_email_sent_at?: string | null
+          link_clicked?: boolean | null
+          link_clicked_at?: string | null
+          name: string
+          sequence_stage?: number
+          test_completed_at: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          last_email_sent_at?: string | null
+          link_clicked?: boolean | null
+          link_clicked_at?: string | null
+          name?: string
+          sequence_stage?: number
+          test_completed_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       questions: {
         Row: {
           correct_answer: string

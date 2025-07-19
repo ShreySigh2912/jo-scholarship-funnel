@@ -2,3 +2,12 @@ project_id = "tiypqlwjwmxjgidodmbq"
 
 [functions.send-confirmation-email]
 verify_jwt = false
+
+[functions.email-sequence]
+verify_jwt = false
+
+[functions.send-sequence-emails]
+verify_jwt = false
+
+[functions.track-link-click]
+verify_jwt = false

@@ -589,9 +589,24 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
               email: applicationData.email,
             }),
           });
+
+          // Start email sequence
+          await fetch(`https://tiypqlwjwmxjgidodmbq.supabase.co/functions/v1/email-sequence`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpeXBxbHdqd214amdpZG9kbWJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMzQ1MDIsImV4cCI6MjA2NzgxMDUwMn0.3XWDkhBmkGlySWcR7EuQ9OSgD-KpAsZBmRxS-iThZfU`,
+            },
+            body: JSON.stringify({
+              applicationId: applicationId,
+              name: applicationData.name,
+              email: applicationData.email,
+            }),
+          });
+          console.log('Email sequence initiated successfully');
         }
       } catch (error) {
-        console.error('Error sending confirmation email:', error);
+        console.error('Error sending confirmation email or starting sequence:', error);
       }
 
       // Track quiz completion event
