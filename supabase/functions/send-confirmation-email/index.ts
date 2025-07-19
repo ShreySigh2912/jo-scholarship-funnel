@@ -24,7 +24,7 @@ const handler = async (req: Request): Promise<Response> => {
     const { name, email }: ConfirmationEmailRequest = await req.json();
 
     const emailResponse = await resend.emails.send({
-      from: "MBA Scholarship Program <onboarding@resend.dev>",
+      from: "MBA Scholarship Program <info@jainonlinescholarship.in>",
       to: [email],
       subject: "Application Received - MBA Scholarship Program",
       html: `
