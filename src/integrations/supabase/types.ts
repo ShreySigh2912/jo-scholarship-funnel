@@ -50,6 +50,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_quiz_responses_session_id"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "quiz_responses_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
@@ -90,6 +97,13 @@ export type Database = {
           total_score?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_quiz_sessions_application_id"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "scholarship_applications"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quiz_sessions_application_id_fkey"
             columns: ["application_id"]

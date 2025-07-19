@@ -61,24 +61,24 @@ const Admin = () => {
 
       if (applicationsError) throw applicationsError;
 
-      // Fetch quiz sessions with applicant names
+      // Fetch quiz sessions
       const { data: sessionsData, error: sessionsError } = await supabase
         .from('quiz_sessions')
-        .select(`
-          *,
-          scholarship_applications!inner(name)
-        `)
+        .select('*')
         .order('started_at', { ascending: false });
 
       if (sessionsError) throw sessionsError;
 
       setApplications(applicationsData || []);
       
-      // Map quiz sessions to include applicant name
-      const sessionsWithNames = sessionsData?.map(session => ({
-        ...session,
-        applicant_name: session.scholarship_applications?.name
-      })) || [];
+      // Map quiz sessions to include applicant name from applications data
+      const sessionsWithNames = sessionsData?.map(session => {
+        const application = applicationsData?.find(app => app.id === session.application_id);
+        return {
+          ...session,
+          applicant_name: application?.name || 'Unknown'
+        };
+      }) || [];
       
       setQuizSessions(sessionsWithNames);
     } catch (error) {

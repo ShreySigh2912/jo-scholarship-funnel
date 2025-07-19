@@ -441,12 +441,17 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
           question_text: questionData.question,
           answer: Array.isArray(answer) ? answer.join(', ') : answer,
           is_correct: isCorrect
-        }, {
-          onConflict: 'session_id,question_id'
         });
 
       if (error) {
         console.error('Error saving answer:', error);
+        toast({
+          title: "Warning",
+          description: "Failed to save answer. Please continue, we'll retry.",
+          variant: "destructive"
+        });
+      } else {
+        console.log('Answer saved successfully for question:', questionId);
       }
     } catch (error) {
       console.error('Error saving answer to Supabase:', error);
