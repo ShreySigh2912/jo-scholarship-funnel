@@ -3,6 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 
 interface ScholarshipApplication {
   id: string;
@@ -24,10 +27,25 @@ interface QuizSession {
   applicant_name?: string;
 }
 
+interface QuizResponse {
+  id: string;
+  session_id: string;
+  question_id: string;
+  question_type: string;
+  section_name: string;
+  question_text: string;
+  answer: string;
+  is_correct: boolean | null;
+  answered_at: string;
+}
+
 const Admin = () => {
   const [applications, setApplications] = useState<ScholarshipApplication[]>([]);
   const [quizSessions, setQuizSessions] = useState<QuizSession[]>([]);
+  const [selectedApplication, setSelectedApplication] = useState<ScholarshipApplication | null>(null);
+  const [quizResponses, setQuizResponses] = useState<QuizResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingResponses, setLoadingResponses] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -68,6 +86,38 @@ const Admin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchQuizResponses = async (applicationId: string) => {
+    setLoadingResponses(true);
+    try {
+      // First get the quiz session for this application
+      const quizSession = quizSessions.find(session => session.application_id === applicationId);
+      if (!quizSession) {
+        setQuizResponses([]);
+        return;
+      }
+
+      // Fetch quiz responses for this session
+      const { data: responsesData, error: responsesError } = await supabase
+        .from('quiz_responses')
+        .select('*')
+        .eq('session_id', quizSession.id)
+        .order('answered_at', { ascending: true });
+
+      if (responsesError) throw responsesError;
+      setQuizResponses(responsesData || []);
+    } catch (error) {
+      console.error('Error fetching quiz responses:', error);
+      setQuizResponses([]);
+    } finally {
+      setLoadingResponses(false);
+    }
+  };
+
+  const handleViewQuizDetails = async (application: ScholarshipApplication) => {
+    setSelectedApplication(application);
+    await fetchQuizResponses(application.id);
   };
 
   const completedQuizzes = quizSessions.filter(session => session.status === 'completed');
@@ -140,6 +190,7 @@ const Admin = () => {
                   <TableHead>Applied At</TableHead>
                   <TableHead>Quiz Status</TableHead>
                   <TableHead>Quiz Score</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -162,6 +213,108 @@ const Admin = () => {
                       </TableCell>
                       <TableCell>
                         {quizSession?.status === 'completed' ? quizSession.total_score : '-'}
+                      </TableCell>
+                      <TableCell>
+                        {quizSession ? (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleViewQuizDetails(application)}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                View Quiz
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>Quiz Details - {application.name}</DialogTitle>
+                                <DialogDescription>
+                                  Detailed quiz responses and results
+                                </DialogDescription>
+                              </DialogHeader>
+                              {loadingResponses ? (
+                                <div className="flex items-center justify-center p-8">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                                </div>
+                              ) : (
+                                <div className="space-y-6">
+                                  {/* Quiz Summary */}
+                                  <Card>
+                                    <CardHeader>
+                                      <CardTitle>Quiz Summary</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold text-primary">{quizResponses.length}</div>
+                                          <div className="text-sm text-muted-foreground">Total Questions</div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold text-green-600">
+                                            {quizResponses.filter(r => r.is_correct === true).length}
+                                          </div>
+                                          <div className="text-sm text-muted-foreground">Correct Answers</div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold text-red-600">
+                                            {quizResponses.filter(r => r.is_correct === false).length}
+                                          </div>
+                                          <div className="text-sm text-muted-foreground">Wrong Answers</div>
+                                        </div>
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold text-primary">{quizSession?.total_score}</div>
+                                          <div className="text-sm text-muted-foreground">Final Score</div>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  {/* Detailed Responses */}
+                                  <Card>
+                                    <CardHeader>
+                                      <CardTitle>Detailed Responses</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <div className="space-y-4">
+                                        {quizResponses.map((response, index) => (
+                                          <div key={response.id} className="border rounded-lg p-4">
+                                            <div className="flex justify-between items-start mb-2">
+                                              <h4 className="font-medium">Question {index + 1}</h4>
+                                              <Badge variant={response.is_correct ? 'default' : 'destructive'}>
+                                                {response.is_correct ? 'Correct' : 'Wrong'}
+                                              </Badge>
+                                            </div>
+                                            <div className="space-y-2">
+                                              <div>
+                                                <span className="text-sm font-medium text-muted-foreground">Section:</span>
+                                                <span className="ml-2">{response.section_name}</span>
+                                              </div>
+                                              <div>
+                                                <span className="text-sm font-medium text-muted-foreground">Question:</span>
+                                                <p className="mt-1">{response.question_text}</p>
+                                              </div>
+                                              <div>
+                                                <span className="text-sm font-medium text-muted-foreground">Answer:</span>
+                                                <span className="ml-2 font-medium">{response.answer}</span>
+                                              </div>
+                                              <div className="text-xs text-muted-foreground">
+                                                Answered at: {new Date(response.answered_at).toLocaleString()}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                </div>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">No Quiz Taken</span>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
