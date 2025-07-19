@@ -21,6 +21,7 @@ interface QuizSession {
   total_score: number;
   started_at: string;
   completed_at: string | null;
+  applicant_name?: string;
 }
 
 const Admin = () => {
@@ -42,16 +43,26 @@ const Admin = () => {
 
       if (applicationsError) throw applicationsError;
 
-      // Fetch quiz sessions
+      // Fetch quiz sessions with applicant names
       const { data: sessionsData, error: sessionsError } = await supabase
         .from('quiz_sessions')
-        .select('*')
+        .select(`
+          *,
+          scholarship_applications!inner(name)
+        `)
         .order('started_at', { ascending: false });
 
       if (sessionsError) throw sessionsError;
 
       setApplications(applicationsData || []);
-      setQuizSessions(sessionsData || []);
+      
+      // Map quiz sessions to include applicant name
+      const sessionsWithNames = sessionsData?.map(session => ({
+        ...session,
+        applicant_name: session.scholarship_applications?.name
+      })) || [];
+      
+      setQuizSessions(sessionsWithNames);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -170,6 +181,7 @@ const Admin = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Applicant Name</TableHead>
                   <TableHead>Session ID</TableHead>
                   <TableHead>Application ID</TableHead>
                   <TableHead>Status</TableHead>
@@ -181,6 +193,7 @@ const Admin = () => {
               <TableBody>
                 {quizSessions.map((session) => (
                   <TableRow key={session.id}>
+                    <TableCell className="font-medium">{session.applicant_name || 'Unknown'}</TableCell>
                     <TableCell className="font-mono text-sm">{session.id.substring(0, 8)}...</TableCell>
                     <TableCell className="font-mono text-sm">{session.application_id.substring(0, 8)}...</TableCell>
                     <TableCell>
