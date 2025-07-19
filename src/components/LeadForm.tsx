@@ -7,6 +7,13 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from '@/hooks/use-toast';
 import { Shield, CheckCircle } from 'lucide-react';
 
+// Declare fbq function for TypeScript
+declare global {
+  interface Window {
+    fbq: (action: string, event: string, data?: any) => void;
+  }
+}
+
 interface FormData {
   name: string;
   email: string;
@@ -66,6 +73,10 @@ export default function LeadForm({ onSuccess }: LeadFormProps) {
   const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateStep1()) {
+      // Track Lead event on successful step 1 submission
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('track', 'Lead');
+      }
       setStep(2);
       setErrors({});
     }

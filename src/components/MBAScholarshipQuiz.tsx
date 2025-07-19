@@ -14,6 +14,13 @@ import { CheckCircle, Clock, Brain, BarChart3, BookOpen, Briefcase, PenTool, Che
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "@/hooks/use-toast"
 
+// Declare fbq function for TypeScript
+declare global {
+  interface Window {
+    fbq: (action: string, event: string, data?: any) => void;
+  }
+}
+
 interface MCQQuestion {
   type: 'mcq'
   id: string
@@ -561,6 +568,11 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
           completed_at: new Date().toISOString()
         })
         .eq('id', sessionId);
+
+      // Track quiz completion event
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('trackCustom', 'SubmitApplication');
+      }
 
       toast({
         title: "🎉 Quiz Completed!",
