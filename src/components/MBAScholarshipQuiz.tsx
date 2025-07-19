@@ -49,287 +49,314 @@ interface MBAScholarshipQuizProps {
   applicationId?: string
 }
 
-const quizData: QuizData = {
-  title: "MBA Scholarship Quiz",
-  totalQuestions: 35,
-  estimatedTime: "15–20 minutes",
-  sections: [
-    {
-      title: "Logical Reasoning & Aptitude",
-      icon: <Brain className="w-5 h-5" />,
-      questions: [
-        {
-          type: 'mcq',
-          id: 'lr1',
-          question: "What comes next in the sequence: 3, 6, 11, 18, 27, ___",
-          options: ["38", "40", "36", "39"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'lr2',
-          question: "If all accountants are professionals, and some professionals are teachers, which of the following is definitely true?",
-          options: ["All teachers are accountants", "Some accountants are teachers", "Some professionals are accountants", "All professionals are teachers"],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'lr3',
-          question: "A train travels 60 km in 1 hour 30 minutes. What is its average speed?",
-          options: ["45 km/h", "40 km/h", "60 km/h", "80 km/h"],
-          correctAnswer: 1
-        },
-        {
-          type: 'mcq',
-          id: 'lr4',
-          question: "Find the odd one out: Growth, Revenue, Profit, Weakness",
-          options: ["Growth", "Revenue", "Profit", "Weakness"],
-          correctAnswer: 3
-        },
-        {
-          type: 'mcq',
-          id: 'lr5',
-          question: 'If "WORK" is coded as 23-15-18-11, what is the code for "PLAY"?',
-          options: ["16-12-1-25", "15-13-1-24", "16-11-2-24", "17-12-2-23"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'lr6',
-          question: "Which shape completes the pattern?",
-          options: ["Triangle", "Square", "Circle", "Pentagon"],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'lr7',
-          question: "A man walks 5 km north, then 3 km east, then 5 km south. Where is he from the starting point?",
-          options: ["3 km East", "2 km West", "3 km West", "Back to starting point"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'lr8',
-          question: "Choose the correct Venn diagram relationship: Finance, Business, Accounting",
-          options: ["All overlap", "Disjoint", "Nested", "No relation"],
-          correctAnswer: 2
-        }
-      ]
-    },
-    {
-      title: "Quantitative & Data Interpretation",
-      icon: <BarChart3 className="w-5 h-5" />,
-      questions: [
-        {
-          type: 'mcq',
-          id: 'qd1',
-          question: "What is the percentage increase from ₹500 to ₹650?",
-          options: ["25%", "30%", "35%", "40%"],
-          correctAnswer: 1
-        },
-        {
-          type: 'mcq',
-          id: 'qd2',
-          question: "A product costs ₹200 and is sold for ₹250. What is the profit margin?",
-          options: ["25%", "20%", "30%", "40%"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'qd3',
-          question: "Median of the following data: 5, 10, 15, 20, 25",
-          options: ["15", "10", "20", "12.5"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'qd4',
-          question: "If 4x = 20, what is x² + 2x?",
-          options: ["40", "50", "60", "70"],
-          correctAnswer: 1
-        },
-        {
-          type: 'mcq',
-          id: 'qd5',
-          question: "Bar graph shows Company A has 20% market share and Company B has 30%. Combined, they hold?",
-          options: ["60%", "40%", "50%", "45%"],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'qd6',
-          question: "A train increases speed from 30 km/h to 60 km/h. What's the percentage increase?",
-          options: ["50%", "100%", "75%", "60%"],
-          correctAnswer: 1
-        },
-        {
-          type: 'mcq',
-          id: 'qd7',
-          question: "Ratio of working professionals to students is 3:5. If total = 80, how many are students?",
-          options: ["30", "40", "50", "60"],
-          correctAnswer: 2
-        }
-      ]
-    },
-    {
-      title: "English & Verbal Ability",
-      icon: <BookOpen className="w-5 h-5" />,
-      questions: [
-        {
-          type: 'mcq',
-          id: 'ev1',
-          question: "Choose the correct sentence:",
-          options: ["She don't work here.", "She doesn't works here.", "She doesn't work here.", "She didn't worked here."],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'ev2',
-          question: 'Fill in the blank: "The presentation was ___ than expected."',
-          options: ["more good", "best", "better", "gooder"],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'ev3',
-          question: 'Find the synonym of "Innovative"',
-          options: ["Creative", "Repetitive", "Traditional", "Conservative"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'ev4',
-          question: "Which sentence uses correct punctuation?",
-          options: ["Lets go now!", "Let's go now.", "Lets go, now.", "Let's go now!"],
-          correctAnswer: 3
-        },
-        {
-          type: 'mcq',
-          id: 'ev5',
-          question: 'Select the antonym of "Flexible"',
-          options: ["Rigid", "Fluid", "Adaptable", "Calm"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'ev6',
-          question: 'Rearrange the sentence: "learners / most / practical / prefer / methods"',
-          options: ["Most learners prefer practical methods", "Learners prefer methods most practical", "Methods prefer practical learners most", "Practical methods most learners prefer"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'ev7',
-          question: "Which word is misspelled?",
-          options: ["Achievement", "Entreprenuer", "Knowledge", "Strategy"],
-          correctAnswer: 1
-        },
-        {
-          type: 'mcq',
-          id: 'ev8',
-          question: 'Choose the correct passive voice: "They completed the project."',
-          options: ["The project completes.", "The project was completed.", "The project has completed.", "The project was complete."],
-          correctAnswer: 1
-        }
-      ]
-    },
-    {
-      title: "Business & Career Awareness",
-      icon: <Briefcase className="w-5 h-5" />,
-      questions: [
-        {
-          type: 'mcq',
-          id: 'bc1',
-          question: "What does ROI stand for?",
-          options: ["Return on Income", "Revenue on Investment", "Return on Investment", "Revenue of Institution"],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'bc2',
-          question: "A marketing funnel is used to:",
-          options: ["Track finances", "Hire employees", "Guide customer journey", "Measure stock prices"],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'bc3',
-          question: "In HR, what does KRA stand for?",
-          options: ["Key Result Area", "Known Resource Allocation", "Knowledge Recruitment Assignment", "Key Risk Assessment"],
-          correctAnswer: 0
-        },
-        {
-          type: 'mcq',
-          id: 'bc4',
-          question: "Who is the current CEO of Microsoft?",
-          options: ["Sundar Pichai", "Satya Nadella", "Elon Musk", "Jeff Bezos"],
-          correctAnswer: 1
-        },
-        {
-          type: 'mcq',
-          id: 'bc5',
-          question: "What is a key component of business analytics?",
-          options: ["Intuition", "Data", "Posters", "Gut feeling"],
-          correctAnswer: 1
-        },
-        {
-          type: 'mcq',
-          id: 'bc6',
-          question: "What does B2B mean in business?",
-          options: ["Back to Business", "Brand to Brand", "Business to Business", "Buy to Buy"],
-          correctAnswer: 2
-        },
-        {
-          type: 'mcq',
-          id: 'bc7',
-          question: "Which function is responsible for employee engagement?",
-          options: ["Finance", "HR", "Logistics", "Legal"],
-          correctAnswer: 1
-        }
-      ]
-    },
-    {
-      title: "Subjective Questions",
-      icon: <PenTool className="w-5 h-5" />,
-      questions: [
-        {
-          type: 'subjective',
-          id: 'sub1',
-          question: "Mini Essay (100–150 words): Why do you want to pursue an MBA, and how will it impact your career?",
-          placeholder: "Write your essay here...",
-          maxLength: 150
-        },
-        {
-          type: 'email',
-          id: 'sub2',
-          question: "Write a professional email (3–5 lines): Appreciate your team lead for supporting you during a project delivery.",
-          placeholder: "Subject: Thank you for your support\n\nDear [Team Lead Name],\n\n...",
-          maxLength: 200
-        },
-        {
-          type: 'pitch',
-          id: 'sub3',
-          question: "Elevator Pitch (max 2 lines): Introduce yourself to the Dean in 30 seconds.",
-          placeholder: "Hello Dean, I am...",
-          maxLength: 100
-        },
-        {
-          type: 'scenario',
-          id: 'sub4',
-          question: "Business Scenario – Text Answer (2–3 lines): Your team missed a deadline. How would you explain this to a client?",
-          placeholder: "I would explain to the client that...",
-          maxLength: 150
-        },
-        {
-          type: 'specialization',
-          id: 'sub5',
-          question: "Pick Your Specialisation (Multi-choice, no correct answer):",
-          options: ["Marketing", "HR", "Finance", "Business Analytics", "AI/ML", "Project Management"]
-        }
-      ]
-    }
-  ]
-}
+// Function to shuffle array using Fisher-Yates algorithm
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
+// Function to shuffle questions within each section
+const getRandomizedQuizData = (): QuizData => {
+  const baseData: QuizData = {
+    title: "MBA Scholarship Quiz",
+    totalQuestions: 35,
+    estimatedTime: "15–20 minutes",
+    sections: [
+      {
+        title: "Logical Reasoning & Aptitude",
+        icon: <Brain className="w-5 h-5" />,
+        questions: [
+          {
+            type: 'mcq',
+            id: 'lr1',
+            question: "What comes next in the sequence: 3, 6, 11, 18, 27, ___",
+            options: ["38", "40", "36", "39"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'lr2',
+            question: "If all accountants are professionals, and some professionals are teachers, which of the following is definitely true?",
+            options: ["All teachers are accountants", "Some accountants are teachers", "Some professionals are accountants", "All professionals are teachers"],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'lr3',
+            question: "A train travels 60 km in 1 hour 30 minutes. What is its average speed?",
+            options: ["45 km/h", "40 km/h", "60 km/h", "80 km/h"],
+            correctAnswer: 1
+          },
+          {
+            type: 'mcq',
+            id: 'lr4',
+            question: "Find the odd one out: Growth, Revenue, Profit, Weakness",
+            options: ["Growth", "Revenue", "Profit", "Weakness"],
+            correctAnswer: 3
+          },
+          {
+            type: 'mcq',
+            id: 'lr5',
+            question: 'If "WORK" is coded as 23-15-18-11, what is the code for "PLAY"?',
+            options: ["16-12-1-25", "15-13-1-24", "16-11-2-24", "17-12-2-23"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'lr6',
+            question: "Which shape completes the pattern?",
+            options: ["Triangle", "Square", "Circle", "Pentagon"],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'lr7',
+            question: "A man walks 5 km north, then 3 km east, then 5 km south. Where is he from the starting point?",
+            options: ["3 km East", "2 km West", "3 km West", "Back to starting point"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'lr8',
+            question: "Choose the correct Venn diagram relationship: Finance, Business, Accounting",
+            options: ["All overlap", "Disjoint", "Nested", "No relation"],
+            correctAnswer: 2
+          }
+        ]
+      },
+      {
+        title: "Quantitative & Data Interpretation",
+        icon: <BarChart3 className="w-5 h-5" />,
+        questions: [
+          {
+            type: 'mcq',
+            id: 'qd1',
+            question: "What is the percentage increase from ₹500 to ₹650?",
+            options: ["25%", "30%", "35%", "40%"],
+            correctAnswer: 1
+          },
+          {
+            type: 'mcq',
+            id: 'qd2',
+            question: "A product costs ₹200 and is sold for ₹250. What is the profit margin?",
+            options: ["25%", "20%", "30%", "40%"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'qd3',
+            question: "Median of the following data: 5, 10, 15, 20, 25",
+            options: ["15", "10", "20", "12.5"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'qd4',
+            question: "If 4x = 20, what is x² + 2x?",
+            options: ["40", "50", "60", "70"],
+            correctAnswer: 1
+          },
+          {
+            type: 'mcq',
+            id: 'qd5',
+            question: "Bar graph shows Company A has 20% market share and Company B has 30%. Combined, they hold?",
+            options: ["60%", "40%", "50%", "45%"],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'qd6',
+            question: "A train increases speed from 30 km/h to 60 km/h. What's the percentage increase?",
+            options: ["50%", "100%", "75%", "60%"],
+            correctAnswer: 1
+          },
+          {
+            type: 'mcq',
+            id: 'qd7',
+            question: "Ratio of working professionals to students is 3:5. If total = 80, how many are students?",
+            options: ["30", "40", "50", "60"],
+            correctAnswer: 2
+          }
+        ]
+      },
+      {
+        title: "English & Verbal Ability",
+        icon: <BookOpen className="w-5 h-5" />,
+        questions: [
+          {
+            type: 'mcq',
+            id: 'ev1',
+            question: "Choose the correct sentence:",
+            options: ["She don't work here.", "She doesn't works here.", "She doesn't work here.", "She didn't worked here."],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'ev2',
+            question: 'Fill in the blank: "The presentation was ___ than expected."',
+            options: ["more good", "best", "better", "gooder"],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'ev3',
+            question: 'Find the synonym of "Innovative"',
+            options: ["Creative", "Repetitive", "Traditional", "Conservative"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'ev4',
+            question: "Which sentence uses correct punctuation?",
+            options: ["Lets go now!", "Let's go now.", "Lets go, now.", "Let's go now!"],
+            correctAnswer: 3
+          },
+          {
+            type: 'mcq',
+            id: 'ev5',
+            question: 'Select the antonym of "Flexible"',
+            options: ["Rigid", "Fluid", "Adaptable", "Calm"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'ev6',
+            question: 'Rearrange the sentence: "learners / most / practical / prefer / methods"',
+            options: ["Most learners prefer practical methods", "Learners prefer methods most practical", "Methods prefer practical learners most", "Practical methods most learners prefer"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'ev7',
+            question: "Which word is misspelled?",
+            options: ["Achievement", "Entreprenuer", "Knowledge", "Strategy"],
+            correctAnswer: 1
+          },
+          {
+            type: 'mcq',
+            id: 'ev8',
+            question: 'Choose the correct passive voice: "They completed the project."',
+            options: ["The project completes.", "The project was completed.", "The project has completed.", "The project was complete."],
+            correctAnswer: 1
+          }
+        ]
+      },
+      {
+        title: "Business & Career Awareness",
+        icon: <Briefcase className="w-5 h-5" />,
+        questions: [
+          {
+            type: 'mcq',
+            id: 'bc1',
+            question: "What does ROI stand for?",
+            options: ["Return on Income", "Revenue on Investment", "Return on Investment", "Revenue of Institution"],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'bc2',
+            question: "A marketing funnel is used to:",
+            options: ["Track finances", "Hire employees", "Guide customer journey", "Measure stock prices"],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'bc3',
+            question: "In HR, what does KRA stand for?",
+            options: ["Key Result Area", "Known Resource Allocation", "Knowledge Recruitment Assignment", "Key Risk Assessment"],
+            correctAnswer: 0
+          },
+          {
+            type: 'mcq',
+            id: 'bc4',
+            question: "Who is the current CEO of Microsoft?",
+            options: ["Sundar Pichai", "Satya Nadella", "Elon Musk", "Jeff Bezos"],
+            correctAnswer: 1
+          },
+          {
+            type: 'mcq',
+            id: 'bc5',
+            question: "What is a key component of business analytics?",
+            options: ["Intuition", "Data", "Posters", "Gut feeling"],
+            correctAnswer: 1
+          },
+          {
+            type: 'mcq',
+            id: 'bc6',
+            question: "What does B2B mean in business?",
+            options: ["Back to Business", "Brand to Brand", "Business to Business", "Buy to Buy"],
+            correctAnswer: 2
+          },
+          {
+            type: 'mcq',
+            id: 'bc7',
+            question: "Which function is responsible for employee engagement?",
+            options: ["Finance", "HR", "Logistics", "Legal"],
+            correctAnswer: 1
+          }
+        ]
+      },
+      {
+        title: "Subjective Questions",
+        icon: <PenTool className="w-5 h-5" />,
+        questions: [
+          {
+            type: 'subjective',
+            id: 'sub1',
+            question: "Mini Essay (100–150 words): Why do you want to pursue an MBA, and how will it impact your career?",
+            placeholder: "Write your essay here...",
+            maxLength: 150
+          },
+          {
+            type: 'email',
+            id: 'sub2',
+            question: "Write a professional email (3–5 lines): Appreciate your team lead for supporting you during a project delivery.",
+            placeholder: "Subject: Thank you for your support\n\nDear [Team Lead Name],\n\n...",
+            maxLength: 200
+          },
+          {
+            type: 'pitch',
+            id: 'sub3',
+            question: "Elevator Pitch (max 2 lines): Introduce yourself to the Dean in 30 seconds.",
+            placeholder: "Hello Dean, I am...",
+            maxLength: 100
+          },
+          {
+            type: 'scenario',
+            id: 'sub4',
+            question: "Business Scenario – Text Answer (2–3 lines): Your team missed a deadline. How would you explain this to a client?",
+            placeholder: "I would explain to the client that...",
+            maxLength: 150
+          },
+          {
+            type: 'specialization',
+            id: 'sub5',
+            question: "Pick Your Specialisation (Multi-choice, no correct answer):",
+            options: ["Marketing", "HR", "Finance", "Business Analytics", "AI/ML", "Project Management"]
+          }
+        ]
+      }
+    ]
+  };
+
+  // Randomize questions within each section (except subjective questions which should stay in order)
+  return {
+    ...baseData,
+    sections: baseData.sections.map(section => {
+      if (section.title === "Subjective Questions") {
+        return section; // Keep subjective questions in original order
+      }
+      return {
+        ...section,
+        questions: shuffleArray(section.questions)
+      };
+    })
+  };
+};
 
 export default function MBAScholarshipQuiz({ onClose, applicationId }: MBAScholarshipQuizProps) {
   const [currentSection, setCurrentSection] = useState(0)
@@ -338,10 +365,16 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
   const [isCompleted, setIsCompleted] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
+  const [quizData, setQuizData] = useState<QuizData | null>(null)
 
-  const allQuestions = quizData.sections.flatMap(section => section.questions)
+  // Initialize randomized quiz data on component mount
+  useEffect(() => {
+    setQuizData(getRandomizedQuizData());
+  }, []);
+
+  const allQuestions = quizData?.sections.flatMap(section => section.questions) || []
   const currentQuestionData = allQuestions[currentQuestion]
-  const progress = ((currentQuestion + 1) / quizData.totalQuestions) * 100
+  const progress = quizData ? ((currentQuestion + 1) / quizData.totalQuestions) * 100 : 0
 
   // Initialize quiz session on component mount
   useEffect(() => {
@@ -386,7 +419,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
 
   // Save answer to Supabase
   const saveAnswerToSupabase = async (questionId: string, answer: string | string[], questionData: Question) => {
-    if (!sessionId) return;
+    if (!sessionId || !quizData) return;
 
     try {
       const sectionIndex = quizData.sections.findIndex(section => 
@@ -450,7 +483,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
       }
     }
 
-    if (currentQuestion < quizData.totalQuestions - 1) {
+    if (quizData && currentQuestion < quizData.totalQuestions - 1) {
       setCurrentQuestion(prev => prev + 1)
       
       // Update section if needed
@@ -468,7 +501,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) {
+    if (currentQuestion > 0 && quizData) {
       setCurrentQuestion(prev => prev - 1)
       
       // Update section if needed
@@ -656,7 +689,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                   <div className="p-4 rounded-lg bg-muted">
-                    <div className="text-2xl font-semibold text-primary">{quizData.totalQuestions}</div>
+                    <div className="text-2xl font-semibold text-primary">{quizData?.totalQuestions || 0}</div>
                     <div className="text-sm text-muted-foreground">Total Questions</div>
                   </div>
                   <div className="p-4 rounded-lg bg-muted">
@@ -664,7 +697,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
                     <div className="text-sm text-muted-foreground">Correct Answers</div>
                   </div>
                   <div className="p-4 rounded-lg bg-muted">
-                    <div className="text-2xl font-semibold text-primary">{quizData.estimatedTime}</div>
+                    <div className="text-2xl font-semibold text-primary">{quizData?.estimatedTime || '15-20 minutes'}</div>
                     <div className="text-sm text-muted-foreground">Time Taken</div>
                   </div>
                 </div>
@@ -742,15 +775,15 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
                 <div>
                   <CardTitle className="text-2xl md:text-3xl font-bold text-primary flex items-center gap-2">
                     <GraduationCap className="h-8 w-8" />
-                    {quizData.title}
+                    {quizData?.title || 'MBA Scholarship Quiz'}
                   </CardTitle>
                   <p className="text-muted-foreground mt-1">
-                    Total: {quizData.totalQuestions} Questions • Estimated Time: {quizData.estimatedTime}
+                    Total: {quizData?.totalQuestions || 0} Questions • Estimated Time: {quizData?.estimatedTime || '15-20 minutes'}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="w-4 h-4" />
-                  <span>{quizData.estimatedTime}</span>
+                  <span>{quizData?.estimatedTime || '15-20 minutes'}</span>
                 </div>
               </div>
               
@@ -759,7 +792,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Progress</span>
                   <span className="text-primary font-medium">
-                    {currentQuestion + 1} of {quizData.totalQuestions}
+                    {currentQuestion + 1} of {quizData?.totalQuestions || 0}
                   </span>
                 </div>
                 <Progress value={progress} className="h-3" />
@@ -770,8 +803,8 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
           {/* Current Section Badge */}
           <div className="mb-4">
             <Badge variant="secondary" className="flex items-center gap-2 w-fit bg-secondary text-secondary-foreground">
-              {quizData.sections[currentSection].icon}
-              Section {currentSection + 1}: {quizData.sections[currentSection].title}
+              {quizData?.sections[currentSection]?.icon}
+              Section {currentSection + 1}: {quizData?.sections[currentSection]?.title || 'Loading...'}
             </Badge>
           </div>
 
@@ -780,7 +813,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Question {currentQuestion + 1} of {quizData.totalQuestions}
+                  Question {currentQuestion + 1} of {quizData?.totalQuestions || 0}
                 </div>
                 <Badge variant="outline" className="border-primary/20">
                   {currentQuestionData?.type === 'mcq' ? 'Multiple Choice' : 'Subjective'}
@@ -809,7 +842,7 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
               disabled={!answers[currentQuestionData?.id || ""]}
               className="flex items-center gap-2"
             >
-              {currentQuestion === quizData.totalQuestions - 1 ? 'Finish Quiz' : 'Next'}
+              {currentQuestion === (quizData?.totalQuestions || 0) - 1 ? 'Finish Quiz' : 'Next'}
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
