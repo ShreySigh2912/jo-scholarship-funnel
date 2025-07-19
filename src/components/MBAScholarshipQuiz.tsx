@@ -569,6 +569,31 @@ export default function MBAScholarshipQuiz({ onClose, applicationId }: MBASchola
         })
         .eq('id', sessionId);
 
+      // Send confirmation email
+      try {
+        const { data: applicationData } = await supabase
+          .from('scholarship_applications')
+          .select('name, email')
+          .eq('id', applicationId)
+          .single();
+
+        if (applicationData) {
+          await fetch(`https://tiypqlwjwmxjgidodmbq.supabase.co/functions/v1/send-confirmation-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpeXBxbHdqd214amdpZG9kbWJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMzQ1MDIsImV4cCI6MjA2NzgxMDUwMn0.3XWDkhBmkGlySWcR7EuQ9OSgD-KpAsZBmRxS-iThZfU`,
+            },
+            body: JSON.stringify({
+              name: applicationData.name,
+              email: applicationData.email,
+            }),
+          });
+        }
+      } catch (error) {
+        console.error('Error sending confirmation email:', error);
+      }
+
       // Track quiz completion event
       if (typeof window !== 'undefined' && window.fbq) {
         window.fbq('trackCustom', 'SubmitApplication');
