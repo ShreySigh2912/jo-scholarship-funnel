@@ -22,7 +22,47 @@ const getEmailContent = (stage: number, name: string, trackingToken: string) => 
   const applicationLink = generateApplicationLink(trackingToken);
   
   switch (stage) {
+    case 0:
+      // Immediate email after test completion
+      return {
+        subject: "✅ Test Completed Successfully! Results Coming Soon",
+        html: `
+          <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px;">
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #2d3748; font-size: 28px; font-weight: bold; margin: 0;">
+                  ✅ Test Completed Successfully, ${name}!
+                </h1>
+                <div style="width: 60px; height: 4px; background: linear-gradient(90deg, #48bb78, #38a169); margin: 15px auto; border-radius: 2px;"></div>
+              </div>
+              
+              <div style="background: linear-gradient(135deg, #48bb78, #38a169); color: white; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px;">
+                <h2 style="margin: 0 0 10px 0; font-size: 24px;">🎉 Congratulations!</h2>
+                <p style="margin: 0; font-size: 18px; font-weight: 500;">
+                  You have successfully completed the MBA Scholarship Assessment
+                </p>
+              </div>
+              
+              <div style="background: #f7fafc; padding: 20px; border-radius: 8px; border-left: 5px solid #4299e1; margin: 25px 0;">
+                <h3 style="color: #2d3748; margin: 0 0 10px 0; font-size: 18px;">📝 What's Next?</h3>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                  Our expert panel is reviewing your responses. You will receive your detailed results and scholarship eligibility status within <strong>24 hours</strong>.
+                </p>
+              </div>
+              
+              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+                <p style="color: #718096; margin: 5px 0;">📧 Keep an eye on your inbox for updates</p>
+                <p style="color: #2d3748; margin: 10px 0; font-weight: 600;">
+                  Best wishes,<br>
+                  <span style="color: #4c51bf;">MBA Scholarship Program Team</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        `,
+      };
     case 1:
+      // 6 hours after test completion - exciting email with payment link
       return {
         subject: "🎉 CONGRATULATIONS! You've Been SELECTED for MBA Scholarship!",
         html: `
@@ -85,68 +125,129 @@ const getEmailContent = (stage: number, name: string, trackingToken: string) => 
         `,
       };
     case 2:
+      // 12 hours after test completion - if no link click, exciting email
       return {
-        subject: "⏰ Don't Miss Out! Your MBA Scholarship is Still Available",
+        subject: "🔥 Don't Miss Out! Your Exclusive MBA Scholarship Awaits",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #ff6b35; margin-bottom: 20px;">⏰ Don't Miss Your Chance, ${name}!</h1>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              We noticed you haven't completed your MBA Scholarship application yet. Your spot is still reserved!
-            </p>
-            
-            <div style="background-color: #fff3e0; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ff6b35;">
-              <h3 style="color: #ff6b35; margin-top: 0;">🚨 Limited Time Remaining</h3>
-              <p style="color: #333; margin-bottom: 15px;">
-                Your scholarship worth <strong>₹5,000</strong> is still available, but time is running out!
-              </p>
-              <a href="${applicationLink}" 
-                 style="display: inline-block; background-color: #ff6b35; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                Secure Your Scholarship Now
-              </a>
+          <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); border-radius: 15px;">
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #2d3748; font-size: 28px; font-weight: bold; margin: 0;">
+                  🔥 Hey ${name}, Your Scholarship is Waiting! 🔥
+                </h1>
+                <div style="width: 60px; height: 4px; background: linear-gradient(90deg, #ff6b6b, #ee5a24); margin: 15px auto; border-radius: 2px;"></div>
+              </div>
+              
+              <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px;">
+                <h2 style="margin: 0 0 10px 0; font-size: 24px;">⚡ SCHOLARSHIP STILL AVAILABLE! ⚡</h2>
+                <p style="margin: 0; font-size: 18px; font-weight: 500;">
+                  Your ₹5,000 MBA Scholarship is still reserved for you!
+                </p>
+              </div>
+              
+              <div style="background: #fff5f5; padding: 20px; border-radius: 8px; border-left: 5px solid #f56565; margin: 25px 0;">
+                <h3 style="color: #2d3748; margin: 0 0 10px 0; font-size: 18px;">🚨 Time is Running Out!</h3>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                  We noticed you haven't secured your scholarship yet. Only a few spots remain, and we'd hate for you to miss this incredible opportunity!
+                </p>
+              </div>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <p style="font-size: 18px; color: #2d3748; margin-bottom: 25px; font-weight: 500;">
+                  💸 Secure your future with just ₹5,000 investment!
+                </p>
+                
+                <a href="https://rzp.io/rzp/jotest" 
+                   style="display: inline-block; background: linear-gradient(135deg, #38a169, #48bb78); color: white; padding: 20px 45px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 20px; margin: 10px; box-shadow: 0 10px 30px rgba(56, 161, 105, 0.4); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
+                  🎯 CLAIM YOUR SCHOLARSHIP NOW
+                </a>
+              </div>
+              
+              <div style="background: linear-gradient(135deg, #4299e1, #3182ce); color: white; padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+                <h3 style="margin: 0 0 10px 0; font-size: 20px;">🏆 Why This Scholarship?</h3>
+                <ul style="list-style: none; padding: 0; margin: 10px 0;">
+                  <li style="margin: 8px 0;">✨ Premium MBA Program Access</li>
+                  <li style="margin: 8px 0;">📚 Expert Faculty & Industry Mentors</li>
+                  <li style="margin: 8px 0;">🚀 100% Placement Assistance</li>
+                  <li style="margin: 8px 0;">💼 Network with Top Professionals</li>
+                </ul>
+              </div>
+              
+              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+                <p style="color: #2d3748; margin: 10px 0; font-weight: 600;">
+                  Don't let this opportunity slip away!<br>
+                  <span style="color: #4c51bf;">MBA Scholarship Program Team</span>
+                </p>
+              </div>
             </div>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              Don't let this opportunity slip away. Complete your application today!
-            </p>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              Best regards,<br>
-              <strong>MBA Scholarship Program Team</strong>
-            </p>
           </div>
         `,
       };
     case 3:
+      // 24 hours after test completion - FOMO email
       return {
-        subject: "🔥 Final Call! Your MBA Scholarship Expires Soon",
+        subject: "⚠️ FINAL NOTICE: Your MBA Scholarship Expires in Hours!",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #dc3545; margin-bottom: 20px;">🔥 Final Call, ${name}!</h1>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              This is your last chance! Your MBA Scholarship is about to expire.
-            </p>
-            
-            <div style="background-color: #f8d7da; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc3545;">
-              <h3 style="color: #dc3545; margin-top: 0;">⚠️ URGENT: Scholarship Expires Soon</h3>
-              <p style="color: #333; margin-bottom: 15px;">
-                Your <strong>₹5,000 scholarship</strong> will expire if you don't act now. This is your final reminder.
-              </p>
-              <a href="${applicationLink}" 
-                 style="display: inline-block; background-color: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                CLAIM NOW - Last Chance!
-              </a>
+          <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border-radius: 15px;">
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #dc3545; font-size: 28px; font-weight: bold; margin: 0;">
+                  ⚠️ FINAL NOTICE, ${name}! ⚠️
+                </h1>
+                <div style="width: 60px; height: 4px; background: linear-gradient(90deg, #dc3545, #c82333); margin: 15px auto; border-radius: 2px;"></div>
+              </div>
+              
+              <div style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px;">
+                <h2 style="margin: 0 0 10px 0; font-size: 24px;">🕐 SCHOLARSHIP EXPIRES SOON! 🕐</h2>
+                <p style="margin: 0; font-size: 18px; font-weight: 500;">
+                  This is your absolute FINAL chance to claim your ₹5,000 scholarship!
+                </p>
+              </div>
+              
+              <div style="background: #fef5e7; padding: 20px; border-radius: 8px; border: 2px solid #f6ad55; margin: 25px 0;">
+                <h3 style="color: #dc3545; margin: 0 0 15px 0; font-size: 20px; text-align: center;">🚨 URGENT: Scholarship Slot Being Released</h3>
+                <p style="color: #2d3748; margin: 0; line-height: 1.6; text-align: center; font-weight: 500;">
+                  Your reserved scholarship worth <strong>₹5,000</strong> will be automatically transferred to the next candidate if you don't act within the next few hours!
+                </p>
+              </div>
+              
+              <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin: 25px 0;">
+                <h3 style="color: #2d3748; margin: 0 0 15px 0; font-size: 18px;">😢 What You'll Miss Out On:</h3>
+                <ul style="color: #4a5568; margin: 0; padding-left: 20px; line-height: 1.8;">
+                  <li>Premium MBA Program worth ₹50,000+ for just ₹5,000</li>
+                  <li>Industry-recognized certification</li>
+                  <li>Direct access to top recruiters</li>
+                  <li>Exclusive alumni network</li>
+                  <li>Lifetime career support</li>
+                </ul>
+              </div>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <p style="font-size: 20px; color: #dc3545; margin-bottom: 25px; font-weight: bold;">
+                  ⏰ Don't let regret be your only reward!
+                </p>
+                
+                <a href="https://rzp.io/rzp/jotest" 
+                   style="display: inline-block; background: linear-gradient(135deg, #dc3545, #c82333); color: white; padding: 22px 50px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 22px; margin: 10px; box-shadow: 0 12px 35px rgba(220, 53, 69, 0.4); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite;">
+                  🔥 SECURE SCHOLARSHIP NOW - FINAL CALL
+                </a>
+                
+                <p style="font-size: 14px; color: #718096; margin-top: 15px;">
+                  This offer will expire automatically and cannot be extended.
+                </p>
+              </div>
+              
+              <div style="background: #feb2b2; color: #742a2a; padding: 15px; border-radius: 8px; margin: 25px 0; text-align: center;">
+                <strong>⚡ FINAL WARNING: This is the last email you'll receive about this scholarship opportunity!</strong>
+              </div>
+              
+              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+                <p style="color: #2d3748; margin: 10px 0; font-weight: 600;">
+                  This is goodbye if you don't act now,<br>
+                  <span style="color: #dc3545;">MBA Scholarship Program Team</span>
+                </p>
+              </div>
             </div>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              After this, your scholarship slot will be given to the next candidate.
-            </p>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              Final regards,<br>
-              <strong>MBA Scholarship Program Team</strong>
-            </p>
           </div>
         `,
       };
@@ -170,10 +271,10 @@ const handler = async (req: Request): Promise<Response> => {
       .from("email_sequences")
       .select(`
         *,
-        application_links!inner(tracking_token, clicked)
+        application_links(tracking_token, clicked)
       `)
       .eq("link_clicked", false)
-      .in("sequence_stage", [1, 2, 3]);
+      .in("sequence_stage", [0, 1, 2, 3]);
 
     if (sequencesError) {
       console.error("Error fetching sequences:", sequencesError);
@@ -193,12 +294,22 @@ const handler = async (req: Request): Promise<Response> => {
       let newStage = sequence.sequence_stage;
 
       // Check if we should send email based on stage and time
-      if (sequence.sequence_stage === 1 && hoursSinceTest >= 6) {
+      if (sequence.sequence_stage === 0 && !sequence.last_email_sent_at) {
+        // Send immediate email after test completion
         shouldSendEmail = true;
-      } else if (sequence.sequence_stage === 2 && hoursSinceTest >= 12) {
+        newStage = 0;
+      } else if (sequence.sequence_stage === 0 && hoursSinceTest >= 6) {
+        // Send first follow-up email 6 hours after test
         shouldSendEmail = true;
-      } else if (sequence.sequence_stage === 3 && hoursSinceTest >= 24) {
+        newStage = 1;
+      } else if (sequence.sequence_stage === 1 && hoursSinceTest >= 12) {
+        // Send second follow-up email 12 hours after test (if no click)
         shouldSendEmail = true;
+        newStage = 2;
+      } else if (sequence.sequence_stage === 2 && hoursSinceTest >= 24) {
+        // Send final FOMO email 24 hours after test (if no click)
+        shouldSendEmail = true;
+        newStage = 3;
       }
 
       // Also check if last email was sent and enough time has passed for next stage
@@ -207,7 +318,10 @@ const handler = async (req: Request): Promise<Response> => {
         const timeSinceLastEmail = now.getTime() - lastEmailAt.getTime();
         const hoursSinceLastEmail = timeSinceLastEmail / (1000 * 60 * 60);
 
-        if (sequence.sequence_stage === 1 && hoursSinceLastEmail >= 6) {
+        if (sequence.sequence_stage === 0 && hoursSinceLastEmail >= 6) {
+          shouldSendEmail = true;
+          newStage = 1;
+        } else if (sequence.sequence_stage === 1 && hoursSinceLastEmail >= 6) {
           shouldSendEmail = true;
           newStage = 2;
         } else if (sequence.sequence_stage === 2 && hoursSinceLastEmail >= 12) {
@@ -219,7 +333,7 @@ const handler = async (req: Request): Promise<Response> => {
       if (shouldSendEmail) {
         console.log(`Sending email stage ${newStage} to ${sequence.email}`);
 
-        const trackingToken = sequence.application_links[0]?.tracking_token;
+        const trackingToken = sequence.application_links?.[0]?.tracking_token;
         if (!trackingToken) {
           console.error("No tracking token found for sequence:", sequence.id);
           continue;

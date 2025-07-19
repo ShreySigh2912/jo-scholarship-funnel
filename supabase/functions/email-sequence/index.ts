@@ -29,7 +29,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { applicationId, name, email }: EmailSequenceRequest = await req.json();
 
-    // Create email sequence entry
+    // Create email sequence entry starting at stage 0 (immediate email)
     const { data: sequenceData, error: sequenceError } = await supabase
       .from("email_sequences")
       .insert({
@@ -37,7 +37,7 @@ const handler = async (req: Request): Promise<Response> => {
         email: email,
         name: name,
         test_completed_at: new Date().toISOString(),
-        sequence_stage: 1
+        sequence_stage: 0
       })
       .select()
       .single();
