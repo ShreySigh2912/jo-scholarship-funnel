@@ -24,34 +24,63 @@ const getEmailContent = (stage: number, name: string, trackingToken: string) => 
   switch (stage) {
     case 1:
       return {
-        subject: "🎉 Congratulations! Next Step for Your MBA Scholarship",
+        subject: "🎉 CONGRATULATIONS! You've Been SELECTED for MBA Scholarship!",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #333; margin-bottom: 20px;">Congratulations ${name}! 🎉</h1>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              Great news! You have successfully completed our MBA Scholarship test.
-            </p>
-            
-            <div style="background-color: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
-              <h3 style="color: #28a745; margin-top: 0;">🎯 Next Step: Complete Your Application</h3>
-              <p style="color: #333; margin-bottom: 15px;">
-                To claim your scholarship worth <strong>₹5,000</strong>, please complete your application form and make the payment.
-              </p>
-              <a href="${applicationLink}" 
-                 style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                Complete Application & Pay ₹5,000
-              </a>
+          <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px;">
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #2d3748; font-size: 28px; font-weight: bold; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+                  🎉 AMAZING NEWS, ${name}! 🎉
+                </h1>
+                <div style="width: 60px; height: 4px; background: linear-gradient(90deg, #48bb78, #38a169); margin: 15px auto; border-radius: 2px;"></div>
+              </div>
+              
+              <div style="background: linear-gradient(135deg, #48bb78, #38a169); color: white; padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px;">
+                <h2 style="margin: 0 0 10px 0; font-size: 24px;">🌟 YOU'VE BEEN SELECTED! 🌟</h2>
+                <p style="margin: 0; font-size: 18px; font-weight: 500;">
+                  Congratulations! You've successfully qualified for our exclusive MBA Scholarship Program
+                </p>
+              </div>
+              
+              <div style="background: linear-gradient(135deg, #fbb6ce, #f687b3); padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+                <h3 style="color: #2d3748; margin: 0 0 15px 0; font-size: 22px;">💰 YOUR EXCLUSIVE SCHOLARSHIP</h3>
+                <div style="font-size: 36px; font-weight: bold; color: #2d3748; margin: 10px 0;">₹5,000</div>
+                <p style="color: #4a5568; margin: 0; font-size: 16px;">Limited Time Offer - Only for Selected Candidates!</p>
+              </div>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <p style="font-size: 18px; color: #2d3748; margin-bottom: 25px; font-weight: 500;">
+                  🚀 Ready to transform your career? Secure your spot NOW!
+                </p>
+                
+                <a href="https://rzp.io/rzp/jotest" 
+                   style="display: inline-block; background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white; padding: 18px 40px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 18px; margin: 10px; box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
+                  💳 Pay ₹5,000 & Claim Scholarship
+                </a>
+                
+                <div style="margin: 20px 0;">
+                  <a href="${applicationLink}" 
+                     style="display: inline-block; background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; box-shadow: 0 6px 20px rgba(76, 81, 191, 0.3);">
+                    📋 Complete Application Form
+                  </a>
+                </div>
+              </div>
+              
+              <div style="background: #f7fafc; padding: 20px; border-radius: 8px; border-left: 5px solid #38a169; margin: 25px 0;">
+                <h4 style="color: #2d3748; margin: 0 0 10px 0; font-size: 18px;">⏰ URGENT: Limited Time Offer</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                  This exclusive selection is valid for <strong>48 hours only</strong>. Don't miss this life-changing opportunity to advance your MBA dreams at an unbeatable price!
+                </p>
+              </div>
+              
+              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+                <p style="color: #718096; margin: 5px 0;">🎓 Join thousands of successful MBA graduates</p>
+                <p style="color: #2d3748; margin: 10px 0; font-weight: 600;">
+                  Best wishes for your bright future,<br>
+                  <span style="color: #4c51bf;">MBA Scholarship Program Team</span>
+                </p>
+              </div>
             </div>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              This is a limited-time offer. Please complete your application within the next 48 hours to secure your scholarship.
-            </p>
-            
-            <p style="font-size: 16px; line-height: 1.6; color: #555;">
-              Best regards,<br>
-              <strong>MBA Scholarship Program Team</strong>
-            </p>
           </div>
         `,
       };
