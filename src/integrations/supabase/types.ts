@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      questions: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          id: string
+          options: Json | null
+          question_text: string
+          question_type: string
+          section_name: string
+          updated_at: string
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string
+          id?: string
+          options?: Json | null
+          question_text: string
+          question_type: string
+          section_name: string
+          updated_at?: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          id?: string
+          options?: Json | null
+          question_text?: string
+          question_type?: string
+          section_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quiz_responses: {
         Row: {
           answer: string
