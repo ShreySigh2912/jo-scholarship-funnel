@@ -21,6 +21,17 @@ interface ScholarshipApplication {
   created_at: string;
 }
 
+interface EmailSequence {
+  id: string;
+  application_id: string;
+  email: string;
+  name: string;
+  sequence_stage: number;
+  last_email_sent_at: string | null;
+  link_clicked: boolean;
+  link_clicked_at: string | null;
+}
+
 interface QuizSession {
   id: string;
   application_id: string;
@@ -59,6 +70,7 @@ interface Question {
 const Admin = () => {
   const [applications, setApplications] = useState<ScholarshipApplication[]>([]);
   const [quizSessions, setQuizSessions] = useState<QuizSession[]>([]);
+  const [emailSequences, setEmailSequences] = useState<EmailSequence[]>([]);
   const [selectedApplication, setSelectedApplication] = useState<ScholarshipApplication | null>(null);
   const [quizResponses, setQuizResponses] = useState<QuizResponse[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -85,8 +97,8 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
-      // Fetch applications, sessions, and questions in parallel for better performance
-      const [applicationsResult, sessionsResult, questionsResult] = await Promise.all([
+      // Fetch applications, sessions, email sequences, and questions in parallel for better performance
+      const [applicationsResult, sessionsResult, emailSequencesResult, questionsResult] = await Promise.all([
         supabase
           .from('scholarship_applications')
           .select('*')
@@ -95,6 +107,10 @@ const Admin = () => {
           .from('quiz_sessions')
           .select('*')
           .order('started_at', { ascending: false }),
+        supabase
+          .from('email_sequences')
+          .select('*')
+          .order('created_at', { ascending: false }),
         supabase
           .from('questions')
           .select('*')
@@ -106,6 +122,13 @@ const Admin = () => {
         setApplications([]);
       } else {
         setApplications(applicationsResult.data || []);
+      }
+
+      if (emailSequencesResult.error) {
+        console.error('Error fetching email sequences:', emailSequencesResult.error);
+        setEmailSequences([]);
+      } else {
+        setEmailSequences(emailSequencesResult.data || []);
       }
 
       if (sessionsResult.error) {
@@ -260,6 +283,10 @@ const Admin = () => {
   const completedQuizzes = quizSessions.filter(session => session.status === 'completed');
   const getQuizSessionForApplication = (applicationId: string) => {
     return quizSessions.find(session => session.application_id === applicationId);
+  };
+  
+  const getEmailSequenceForApplication = (applicationId: string) => {
+    return emailSequences.find(sequence => sequence.application_id === applicationId);
   };
 
   if (loading) {
@@ -574,12 +601,16 @@ const Admin = () => {
                   <TableHead>Applied At</TableHead>
                   <TableHead>Quiz Status</TableHead>
                   <TableHead>Quiz Score</TableHead>
+                  <TableHead>Email Stage</TableHead>
+                  <TableHead>Last Email</TableHead>
+                  <TableHead>Link Clicked</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {applications.map((application) => {
                   const quizSession = getQuizSessionForApplication(application.id);
+                  const emailSequence = getEmailSequenceForApplication(application.id);
                   return (
                     <TableRow key={application.id}>
                       <TableCell className="font-medium">{application.name}</TableCell>
@@ -597,6 +628,33 @@ const Admin = () => {
                       </TableCell>
                       <TableCell>
                         {quizSession?.status === 'completed' ? quizSession.total_score : '-'}
+                      </TableCell>
+                      <TableCell>
+                        {emailSequence ? (
+                          <Badge variant="secondary">
+                            Stage {emailSequence.sequence_stage}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline">No Emails</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {emailSequence?.last_email_sent_at ? (
+                          <span className="text-sm">
+                            {new Date(emailSequence.last_email_sent_at).toLocaleDateString()}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">None</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {emailSequence ? (
+                          <Badge variant={emailSequence.link_clicked ? 'default' : 'destructive'}>
+                            {emailSequence.link_clicked ? 'Yes' : 'No'}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         {quizSession ? (
