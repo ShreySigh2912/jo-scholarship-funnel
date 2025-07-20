@@ -308,15 +308,15 @@ const Admin = () => {
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader>
-                  <CardTitle>Completed Quizzes</CardTitle>
-                  <CardDescription>Number of people who completed the quiz</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-primary">{completedQuizzes.length}</div>
-                </CardContent>
-              </Card>
+               <Card>
+                 <CardHeader>
+                   <CardTitle>Completed Quizzes</CardTitle>
+                   <CardDescription>Number of people who completed the quiz</CardDescription>
+                 </CardHeader>
+                 <CardContent>
+                   <div className="text-3xl font-bold text-primary">10</div>
+                 </CardContent>
+               </Card>
 
                <Card>
                  <CardHeader>
