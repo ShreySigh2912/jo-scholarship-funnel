@@ -631,10 +631,10 @@ const Admin = () => {
                                     </CardHeader>
                                     <CardContent>
                                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        <div className="text-center">
-                                          <div className="text-2xl font-bold text-primary">{quizResponses.length}</div>
-                                          <div className="text-sm text-muted-foreground">Total Questions</div>
-                                        </div>
+                                         <div className="text-center">
+                                           <div className="text-2xl font-bold text-primary">35</div>
+                                           <div className="text-sm text-muted-foreground">Total Questions</div>
+                                         </div>
                                         <div className="text-center">
                                           <div className="text-2xl font-bold text-green-600">
                                             {quizResponses.filter(r => r.is_correct === true).length}
