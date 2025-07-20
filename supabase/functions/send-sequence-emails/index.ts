@@ -269,10 +269,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Get email sequences that need emails sent
     const { data: sequences, error: sequencesError } = await supabase
       .from("email_sequences")
-      .select(`
-        *,
-        application_links(tracking_token, clicked)
-      `)
+      .select("*")
       .eq("link_clicked", false)
       .in("sequence_stage", [0, 1, 2, 3]);
 
@@ -333,11 +330,19 @@ const handler = async (req: Request): Promise<Response> => {
       if (shouldSendEmail) {
         console.log(`Sending email stage ${newStage} to ${sequence.email}`);
 
-        const trackingToken = sequence.application_links?.[0]?.tracking_token;
-        if (!trackingToken) {
-          console.error("No tracking token found for sequence:", sequence.id);
+        // Get tracking token for this application
+        const { data: applicationLink, error: linkError } = await supabase
+          .from("application_links")
+          .select("tracking_token")
+          .eq("application_id", sequence.application_id)
+          .single();
+
+        if (linkError || !applicationLink) {
+          console.error("No tracking token found for application:", sequence.application_id, linkError);
           continue;
         }
+
+        const trackingToken = applicationLink.tracking_token;
 
         const emailContent = getEmailContent(newStage, sequence.name, trackingToken);
 
