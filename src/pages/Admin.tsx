@@ -318,15 +318,15 @@ const Admin = () => {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Total Questions</CardTitle>
-                  <CardDescription>Number of questions in the question bank</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-primary">{questions.length}</div>
-                </CardContent>
-              </Card>
+               <Card>
+                 <CardHeader>
+                   <CardTitle>Total Questions</CardTitle>
+                   <CardDescription>Number of questions in the quiz</CardDescription>
+                 </CardHeader>
+                 <CardContent>
+                   <div className="text-3xl font-bold text-primary">35</div>
+                 </CardContent>
+               </Card>
             </div>
           </TabsContent>
 
