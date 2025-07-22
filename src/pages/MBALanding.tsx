@@ -11,38 +11,41 @@ import FAQSection from '@/components/FAQSection';
 import CountdownTimer from '@/components/CountdownTimer';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 import { toast } from '@/hooks/use-toast';
-
 interface MBALandingProps {
   resetTimer?: boolean;
 }
-
-const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
+const MBALanding = ({
+  resetTimer = false
+}: MBALandingProps) => {
   const [showForm, setShowForm] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [applicationId, setApplicationId] = useState<string | null>(null);
   const formRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-
   const scrollToForm = () => {
     setShowForm(true);
     setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth' });
+      formRef.current?.scrollIntoView({
+        behavior: 'smooth'
+      });
     }, 100);
   };
-
-  const handleFormSuccess = (data: { name: string; email: string; phone: string }) => {
+  const handleFormSuccess = (data: {
+    name: string;
+    email: string;
+    phone: string;
+  }) => {
     toast({
       title: "🎉 You've unlocked your scholarship eligibility!",
       description: "Starting your scholarship quiz now..."
     });
-    
+
     // Open quiz after short delay
     setTimeout(() => {
       setShowQuiz(true);
     }, 1500);
   };
-
   const handleQuizRedirect = (appId: string) => {
     setFormSubmitted(true);
     setApplicationId(appId);
@@ -50,25 +53,21 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
       title: "🎉 You've unlocked your scholarship eligibility!",
       description: "Redirecting to scholarship quiz..."
     });
-    
+
     // Navigate to quiz page with application ID after short delay
     setTimeout(() => {
       navigate(`/quiz?applicationId=${appId}`);
     }, 1500);
   };
-
   if (showQuiz) {
     return <MBAScholarshipQuiz onClose={() => setShowQuiz(false)} applicationId={applicationId} />;
   }
-
   const containerStyle = {
     backgroundImage: 'url("/bg-pattern-3.svg")',
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundPosition: 'center'
   };
-  
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 py-20 px-4">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
@@ -111,24 +110,13 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10">
-            <Button 
-              size="lg" 
-              className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-200"
-              onClick={scrollToForm}
-            >
+            <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-200" onClick={scrollToForm}>
               <Trophy className="mr-2 h-5 w-5" />
               Claim ₹25,000 Scholarship
             </Button>
-            {!formSubmitted && (
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="text-lg px-8 py-6 border-2 hover:bg-muted"
-                onClick={scrollToForm}
-              >
+            {!formSubmitted && <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-2 hover:bg-muted" onClick={scrollToForm}>
                 Download Brochure
-              </Button>
-            )}
+              </Button>}
           </div>
 
           {/* Countdown Timer */}
@@ -149,46 +137,37 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <GraduationCap className="h-8 w-8 text-primary" />,
-                title: "100% Online Learning",
-                description: "Study anytime, anywhere with our flexible online platform"
-              },
-              {
-                icon: <Award className="h-8 w-8 text-primary" />,
-                title: "UGC Recognized",
-                description: "Fully accredited degree recognized by employers globally"
-              },
-              {
-                icon: <Users className="h-8 w-8 text-primary" />,
-                title: "Expert Faculty",
-                description: "Learn from industry veterans and academic experts"
-              },
-              {
-                icon: <TrendingUp className="h-8 w-8 text-primary" />,
-                title: "Career Growth",
-                description: "85% of our graduates get promoted within 6 months"
-              },
-              {
-                icon: <Target className="h-8 w-8 text-primary" />,
-                title: "Placement Support",
-                description: "Dedicated placement cell with 500+ hiring partners"
-              },
-              {
-                icon: <Zap className="h-8 w-8 text-primary" />,
-                title: "Fast Track Option",
-                description: "Complete your MBA in 12-24 months"
-              }
-            ].map((feature, index) => (
-              <Card key={index} className="text-center p-6 border-border hover:shadow-lg transition-all duration-300">
+            {[{
+            icon: <GraduationCap className="h-8 w-8 text-primary" />,
+            title: "100% Online Learning",
+            description: "Study anytime, anywhere with our flexible online platform"
+          }, {
+            icon: <Award className="h-8 w-8 text-primary" />,
+            title: "UGC Recognized",
+            description: "Fully accredited degree recognized by employers globally"
+          }, {
+            icon: <Users className="h-8 w-8 text-primary" />,
+            title: "Expert Faculty",
+            description: "Learn from industry veterans and academic experts"
+          }, {
+            icon: <TrendingUp className="h-8 w-8 text-primary" />,
+            title: "Career Growth",
+            description: "85% of our graduates get promoted within 6 months"
+          }, {
+            icon: <Target className="h-8 w-8 text-primary" />,
+            title: "Placement Support",
+            description: "Dedicated placement cell with 500+ hiring partners"
+          }, {
+            icon: <Zap className="h-8 w-8 text-primary" />,
+            title: "Fast Track Option",
+            description: "Complete your MBA in 12-24 months"
+          }].map((feature, index) => <Card key={index} className="text-center p-6 border-border hover:shadow-lg transition-all duration-300">
                 <div className="mb-4 flex justify-center">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground">{feature.description}</p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -206,27 +185,40 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {[
-              { name: "Marketing", icon: <BarChart3 className="h-5 w-5" /> },
-              { name: "Finance", icon: <TrendingUp className="h-5 w-5" /> },
-              { name: "HR Management", icon: <Users className="h-5 w-5" /> },
-              { name: "Business Analytics", icon: <BarChart3 className="h-5 w-5" /> },
-              { name: "Digital Marketing", icon: <Zap className="h-5 w-5" /> },
-              { name: "Operations", icon: <Target className="h-5 w-5" /> },
-              { name: "International Business", icon: <Trophy className="h-5 w-5" /> },
-              { name: "Entrepreneurship", icon: <Star className="h-5 w-5" /> },
-              { name: "Project Management", icon: <CheckCircle className="h-5 w-5" /> },
-              { name: "Supply Chain", icon: <BookOpen className="h-5 w-5" /> }
-            ].map((spec, index) => (
-              <Badge 
-                key={index} 
-                variant="outline" 
-                className="p-3 justify-center border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 cursor-pointer"
-              >
+            {[{
+            name: "Marketing",
+            icon: <BarChart3 className="h-5 w-5" />
+          }, {
+            name: "Finance",
+            icon: <TrendingUp className="h-5 w-5" />
+          }, {
+            name: "HR Management",
+            icon: <Users className="h-5 w-5" />
+          }, {
+            name: "Business Analytics",
+            icon: <BarChart3 className="h-5 w-5" />
+          }, {
+            name: "Digital Marketing",
+            icon: <Zap className="h-5 w-5" />
+          }, {
+            name: "Operations",
+            icon: <Target className="h-5 w-5" />
+          }, {
+            name: "International Business",
+            icon: <Trophy className="h-5 w-5" />
+          }, {
+            name: "Entrepreneurship",
+            icon: <Star className="h-5 w-5" />
+          }, {
+            name: "Project Management",
+            icon: <CheckCircle className="h-5 w-5" />
+          }, {
+            name: "Supply Chain",
+            icon: <BookOpen className="h-5 w-5" />
+          }].map((spec, index) => <Badge key={index} variant="outline" className="p-3 justify-center border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 cursor-pointer">
                 <span className="mr-2">{spec.icon}</span>
                 {spec.name}
-              </Badge>
-            ))}
+              </Badge>)}
           </div>
         </div>
       </section>
@@ -244,30 +236,25 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Priya Sharma",
-                role: "Senior Manager → Director",
-                company: "TCS",
-                growth: "65% salary increase",
-                image: "👩‍💼"
-              },
-              {
-                name: "Rahul Kumar",
-                role: "Team Lead → VP Marketing",
-                company: "Wipro",
-                growth: "80% salary increase",
-                image: "👨‍💼"
-              },
-              {
-                name: "Anita Patel",
-                role: "Executive → Head of Operations",
-                company: "Infosys",
-                growth: "75% salary increase",
-                image: "👩‍💼"
-              }
-            ].map((story, index) => (
-              <Card key={index} className="p-6 border-border">
+            {[{
+            name: "Priya Sharma",
+            role: "Senior Manager → Director",
+            company: "TCS",
+            growth: "65% salary increase",
+            image: "👩‍💼"
+          }, {
+            name: "Rahul Kumar",
+            role: "Team Lead → VP Marketing",
+            company: "Wipro",
+            growth: "80% salary increase",
+            image: "👨‍💼"
+          }, {
+            name: "Anita Patel",
+            role: "Executive → Head of Operations",
+            company: "Infosys",
+            growth: "75% salary increase",
+            image: "👩‍💼"
+          }].map((story, index) => <Card key={index} className="p-6 border-border">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-2">{story.image}</div>
                   <h3 className="text-xl font-semibold text-foreground">{story.name}</h3>
@@ -279,8 +266,7 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
                     {story.growth}
                   </Badge>
                 </div>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -294,29 +280,23 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
                 Designed for Working Professionals
               </h2>
               <div className="space-y-6">
-                {[
-                  {
-                    icon: <Clock className="h-6 w-6 text-primary" />,
-                    title: "Flexible Schedule",
-                    description: "Weekend classes & recorded sessions available 24/7"
-                  },
-                  {
-                    icon: <BookOpen className="h-6 w-6 text-primary" />,
-                    title: "Industry-Relevant Curriculum",
-                    description: "Updated syllabus with latest business trends & case studies"
-                  },
-                  {
-                    icon: <Users className="h-6 w-6 text-primary" />,
-                    title: "Peer Learning",
-                    description: "Network with 1000+ professionals from diverse industries"
-                  },
-                  {
-                    icon: <Award className="h-6 w-6 text-primary" />,
-                    title: "Industry Projects",
-                    description: "Work on live projects with leading companies"
-                  }
-                ].map((feature, index) => (
-                  <div key={index} className="flex gap-4">
+                {[{
+                icon: <Clock className="h-6 w-6 text-primary" />,
+                title: "Flexible Schedule",
+                description: "Weekend classes & recorded sessions available 24/7"
+              }, {
+                icon: <BookOpen className="h-6 w-6 text-primary" />,
+                title: "Industry-Relevant Curriculum",
+                description: "Updated syllabus with latest business trends & case studies"
+              }, {
+                icon: <Users className="h-6 w-6 text-primary" />,
+                title: "Peer Learning",
+                description: "Network with 1000+ professionals from diverse industries"
+              }, {
+                icon: <Award className="h-6 w-6 text-primary" />,
+                title: "Industry Projects",
+                description: "Work on live projects with leading companies"
+              }].map((feature, index) => <div key={index} className="flex gap-4">
                     <div className="flex-shrink-0">
                       {feature.icon}
                     </div>
@@ -324,8 +304,7 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
                       <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
                       <p className="text-muted-foreground">{feature.description}</p>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
             <div className="bg-gradient-to-br from-primary/10 to-secondary/10 p-8 rounded-2xl">
@@ -410,11 +389,7 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
                 </ul>
               </div>
               
-              <Button 
-                size="lg" 
-                className="mt-8 text-lg px-8 py-6"
-                onClick={scrollToForm}
-              >
+              <Button size="lg" className="mt-8 text-lg px-8 py-6" onClick={scrollToForm}>
                 Apply for Scholarship
               </Button>
             </Card>
@@ -442,7 +417,7 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
               <Phone className="h-8 w-8 text-primary mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">Call Us</h3>
               <p className="text-muted-foreground mb-3">Mon-Sat, 9 AM - 7 PM</p>
-              <Button variant="outline" size="sm">1800-102-4431</Button>
+              <Button variant="outline" size="sm">+91 9535708904</Button>
             </Card>
 
             <Card className="text-center p-6 border-border">
@@ -463,18 +438,14 @@ const MBALanding = ({ resetTimer = false }: MBALandingProps) => {
       </section>
 
       {/* Contact Form */}
-      {showForm && (
-        <section ref={formRef} className="py-16 px-4 bg-muted">
+      {showForm && <section ref={formRef} className="py-16 px-4 bg-muted">
           <div className="container mx-auto max-w-2xl">
             <ContactForm onSubmit={handleFormSuccess} onSuccess={handleQuizRedirect} />
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* Sticky Mobile CTA */}
       <StickyMobileCTA onClick={scrollToForm} />
-    </div>
-  );
+    </div>;
 };
-
 export default MBALanding;
