@@ -43,6 +43,10 @@ const Admin = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [quizSessions, setQuizSessions] = useState<any[]>([]);
   const [emailSequencesData, setEmailSequencesData] = useState<any[]>([]);
+  const [quizResponses, setQuizResponses] = useState<any[]>([]);
+  const [selectedApplication, setSelectedApplication] = useState<ScholarshipApplication | null>(null);
+  const [isQuizDetailOpen, setIsQuizDetailOpen] = useState(false);
+  const [loadingResponses, setLoadingResponses] = useState(false);
   
   // Email Management States
   const [emailTemplates, setEmailTemplates] = useState<any[]>([]);
@@ -129,6 +133,52 @@ const Admin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchQuizResponses = async (applicationId: string) => {
+    try {
+      setLoadingResponses(true);
+      
+      // First get the quiz session for this application
+      const { data: sessionData, error: sessionError } = await supabase
+        .from('quiz_sessions')
+        .select('*')
+        .eq('application_id', applicationId)
+        .maybeSingle();
+
+      if (sessionError) throw sessionError;
+      
+      if (!sessionData) {
+        setQuizResponses([]);
+        return;
+      }
+
+      // Then get all responses for this session
+      const { data: responsesData, error: responsesError } = await supabase
+        .from('quiz_responses')
+        .select('*')
+        .eq('session_id', sessionData.id)
+        .order('answered_at', { ascending: true });
+
+      if (responsesError) throw responsesError;
+      setQuizResponses(responsesData || []);
+
+    } catch (error) {
+      console.error('Error fetching quiz responses:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch quiz responses. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingResponses(false);
+    }
+  };
+
+  const handleViewQuizDetails = async (application: ScholarshipApplication) => {
+    setSelectedApplication(application);
+    setIsQuizDetailOpen(true);
+    await fetchQuizResponses(application.id);
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -513,7 +563,11 @@ const Admin = () => {
                             )}
                           </TableCell>
                           <TableCell>
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleViewQuizDetails(application)}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
                           </TableCell>
@@ -582,6 +636,196 @@ const Admin = () => {
                 </Table>
               </CardContent>
             </Card>
+
+            {/* Quiz Detail Modal */}
+            <Dialog open={isQuizDetailOpen} onOpenChange={setIsQuizDetailOpen}>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    Quiz Details - {selectedApplication?.name}
+                  </DialogTitle>
+                  <DialogDescription>
+                    Individual responses and performance analysis
+                  </DialogDescription>
+                </DialogHeader>
+                
+                {loadingResponses ? (
+                  <div className="flex items-center justify-center p-6">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Quiz Summary */}
+                    {(() => {
+                      const quizSession = quizSessions.find(session => 
+                        session.application_id === selectedApplication?.id
+                      );
+                      
+                      if (!quizSession) {
+                        return (
+                          <Card>
+                            <CardContent className="p-6">
+                              <p className="text-center text-muted-foreground">
+                                No quiz session found for this applicant.
+                              </p>
+                            </CardContent>
+                          </Card>
+                        );
+                      }
+
+                      return (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="text-lg">Quiz Summary</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Status</p>
+                                <Badge variant={quizSession.status === 'completed' ? 'default' : 'secondary'}>
+                                  {quizSession.status}
+                                </Badge>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Score</p>
+                                <p className="text-lg font-bold">{quizSession.total_score || 0}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Started</p>
+                                <p className="text-sm">{new Date(quizSession.started_at).toLocaleString()}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                                <p className="text-sm">
+                                  {quizSession.completed_at 
+                                    ? new Date(quizSession.completed_at).toLocaleString()
+                                    : 'In Progress'
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })()}
+
+                    {/* Individual Responses */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Individual Responses</CardTitle>
+                        <CardDescription>
+                          Question-by-question breakdown of answers
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {quizResponses.length === 0 ? (
+                          <p className="text-center text-muted-foreground py-6">
+                            No quiz responses found for this applicant.
+                          </p>
+                        ) : (
+                          <div className="space-y-4">
+                            {quizResponses.map((response, index) => (
+                              <div key={response.id} className="border rounded-lg p-4">
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Badge variant="outline">Q{index + 1}</Badge>
+                                      <Badge variant="secondary">{response.section_name}</Badge>
+                                      <Badge variant="outline">{response.question_type}</Badge>
+                                    </div>
+                                    <h4 className="font-medium mb-2">{response.question_text}</h4>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {response.is_correct !== null && (
+                                      <Badge variant={response.is_correct ? 'default' : 'destructive'}>
+                                        {response.is_correct ? 'Correct' : 'Incorrect'}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-muted p-3 rounded">
+                                  <p className="text-sm font-medium text-muted-foreground mb-1">Answer:</p>
+                                  <p className="font-medium">{response.answer}</p>
+                                </div>
+                                
+                                <div className="mt-2 text-xs text-muted-foreground">
+                                  Answered at: {new Date(response.answered_at).toLocaleString()}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Performance Analysis */}
+                    {quizResponses.length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-lg">Performance Analysis</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="text-center p-4 bg-muted rounded-lg">
+                              <p className="text-2xl font-bold text-green-600">
+                                {quizResponses.filter(r => r.is_correct === true).length}
+                              </p>
+                              <p className="text-sm text-muted-foreground">Correct Answers</p>
+                            </div>
+                            <div className="text-center p-4 bg-muted rounded-lg">
+                              <p className="text-2xl font-bold text-red-600">
+                                {quizResponses.filter(r => r.is_correct === false).length}
+                              </p>
+                              <p className="text-sm text-muted-foreground">Incorrect Answers</p>
+                            </div>
+                            <div className="text-center p-4 bg-muted rounded-lg">
+                              <p className="text-2xl font-bold text-blue-600">
+                                {quizResponses.length > 0 
+                                  ? Math.round((quizResponses.filter(r => r.is_correct === true).length / quizResponses.length) * 100)
+                                  : 0
+                                }%
+                              </p>
+                              <p className="text-sm text-muted-foreground">Accuracy Rate</p>
+                            </div>
+                          </div>
+                          
+                          {/* Section-wise breakdown */}
+                          <div className="mt-6">
+                            <h4 className="font-medium mb-3">Section-wise Performance</h4>
+                            <div className="space-y-2">
+                              {Object.entries(
+                                quizResponses.reduce((acc, response) => {
+                                  const section = response.section_name;
+                                  if (!acc[section]) {
+                                    acc[section] = { total: 0, correct: 0 };
+                                  }
+                                  acc[section].total++;
+                                  if (response.is_correct) acc[section].correct++;
+                                  return acc;
+                                }, {} as Record<string, { total: number; correct: number }>)
+                              ).map(([section, stats]: [string, { total: number; correct: number }]) => (
+                                <div key={section} className="flex justify-between items-center p-2 border rounded">
+                                  <span className="font-medium">{section}</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground">
+                                      {stats.correct}/{stats.total}
+                                    </span>
+                                    <Badge variant="outline">
+                                      {Math.round((stats.correct / stats.total) * 100)}%
+                                    </Badge>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
           </TabsContent>
         </Tabs>
       </div>
