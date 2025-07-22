@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -100,6 +100,14 @@ const Admin = () => {
   const [isEmailCreatorOpen, setIsEmailCreatorOpen] = useState(false);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [isSendingEmails, setIsSendingEmails] = useState(false);
+  
+  // Link and Button modal states
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [isButtonModalOpen, setIsButtonModalOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [linkText, setLinkText] = useState('');
+  const [buttonUrl, setButtonUrl] = useState('');
+  const [buttonText, setButtonText] = useState('');
 
   const { user, loading: authStateLoading, isAdmin, signOut, signIn } = useAuth();
   
@@ -373,10 +381,16 @@ const Admin = () => {
 
   // Email Creator Functions
   const insertHyperlink = () => {
-    const link = prompt('Enter the URL (include https://):');
-    const text = prompt('Enter the link text:');
-    if (link && text) {
-      const hyperlink = `<a href="${link}" style="color: #4c51bf; text-decoration: underline;" target="_blank">${text}</a>`;
+    setIsLinkModalOpen(true);
+  };
+
+  const insertButton = () => {
+    setIsButtonModalOpen(true);
+  };
+
+  const handleInsertLink = () => {
+    if (linkUrl && linkText) {
+      const hyperlink = `<a href="${linkUrl}" style="color: #4c51bf; text-decoration: underline;" target="_blank">${linkText}</a>`;
       const textarea = document.querySelector('textarea[placeholder*="email content"]') as HTMLTextAreaElement;
       if (textarea) {
         const start = textarea.selectionStart;
@@ -393,14 +407,17 @@ const Admin = () => {
       } else {
         setEmailContent(prev => prev + hyperlink);
       }
+      
+      // Reset states and close modal
+      setLinkUrl('');
+      setLinkText('');
+      setIsLinkModalOpen(false);
     }
   };
 
-  const insertButton = () => {
-    const link = prompt('Enter the button URL (include https://):');
-    const text = prompt('Enter the button text:');
-    if (link && text) {
-      const button = `<div style="text-align: center; margin: 20px 0;"><a href="${link}" style="display: inline-block; background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;" target="_blank">${text}</a></div>`;
+  const handleInsertButton = () => {
+    if (buttonUrl && buttonText) {
+      const button = `<div style="text-align: center; margin: 20px 0;"><a href="${buttonUrl}" style="display: inline-block; background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;" target="_blank">${buttonText}</a></div>`;
       const textarea = document.querySelector('textarea[placeholder*="email content"]') as HTMLTextAreaElement;
       if (textarea) {
         const start = textarea.selectionStart;
@@ -417,6 +434,11 @@ const Admin = () => {
       } else {
         setEmailContent(prev => prev + button);
       }
+      
+      // Reset states and close modal
+      setButtonUrl('');
+      setButtonText('');
+      setIsButtonModalOpen(false);
     }
   };
 
@@ -1375,6 +1397,86 @@ const Admin = () => {
         </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Add Link Modal */}
+        <Dialog open={isLinkModalOpen} onOpenChange={setIsLinkModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Hyperlink</DialogTitle>
+              <DialogDescription>
+                Add a clickable link to your email content.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="linkUrl">URL</Label>
+                <Input
+                  id="linkUrl"
+                  placeholder="https://example.com"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="linkText">Link Text</Label>
+                <Input
+                  id="linkText"
+                  placeholder="Click here"
+                  value={linkText}
+                  onChange={(e) => setLinkText(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsLinkModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleInsertLink} disabled={!linkUrl || !linkText}>
+                Insert Link
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Button Modal */}
+        <Dialog open={isButtonModalOpen} onOpenChange={setIsButtonModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Button</DialogTitle>
+              <DialogDescription>
+                Add a styled button to your email content.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="buttonUrl">Button URL</Label>
+                <Input
+                  id="buttonUrl"
+                  placeholder="https://example.com"
+                  value={buttonUrl}
+                  onChange={(e) => setButtonUrl(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="buttonText">Button Text</Label>
+                <Input
+                  id="buttonText"
+                  placeholder="Get Started"
+                  value={buttonText}
+                  onChange={(e) => setButtonText(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsButtonModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleInsertButton} disabled={!buttonUrl || !buttonText}>
+                Insert Button
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
