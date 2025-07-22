@@ -42,7 +42,7 @@ const handler = async (req: Request): Promise<Response> => {
       for (const email of emails) {
         try {
           const emailResponse = await resend.emails.send({
-            from: "MBA Scholarship <admin@yourdomain.com>",
+            from: "MBA Scholarship <info@jainonlinescholarship.in>",
             to: [email],
             subject: subject,
             html: `
