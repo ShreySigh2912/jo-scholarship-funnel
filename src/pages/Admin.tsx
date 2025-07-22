@@ -344,6 +344,10 @@ const Admin = () => {
           title: "Success",
           description: "Signed in successfully!",
         });
+        // Force a refresh of the admin role check
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
     } catch (error) {
       toast({
@@ -412,6 +416,10 @@ const Admin = () => {
         setEmail('');
         setPassword('');
         setFullName('');
+        // Force a refresh after signup
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       }
     } catch (error) {
       toast({
