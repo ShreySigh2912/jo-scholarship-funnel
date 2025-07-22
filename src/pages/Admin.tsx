@@ -341,7 +341,7 @@ const Admin = () => {
                    <CardDescription>Number of people who completed the quiz</CardDescription>
                  </CardHeader>
                  <CardContent>
-                   <div className="text-3xl font-bold text-primary">10</div>
+                   <div className="text-3xl font-bold text-primary">{completedQuizzes.length}</div>
                  </CardContent>
                </Card>
 
@@ -351,7 +351,7 @@ const Admin = () => {
                    <CardDescription>Number of questions in the quiz</CardDescription>
                  </CardHeader>
                  <CardContent>
-                   <div className="text-3xl font-bold text-primary">35</div>
+                   <div className="text-3xl font-bold text-primary">{questions.length}</div>
                  </CardContent>
                </Card>
             </div>
@@ -690,7 +690,7 @@ const Admin = () => {
                                     <CardContent>
                                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                          <div className="text-center">
-                                           <div className="text-2xl font-bold text-primary">35</div>
+                                           <div className="text-2xl font-bold text-primary">{questions.length}</div>
                                            <div className="text-sm text-muted-foreground">Total Questions</div>
                                          </div>
                                         <div className="text-center">
