@@ -11,8 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { Eye, Plus, Trash2, LogOut, LogIn, EyeOff } from "lucide-react";
+import { Eye, Plus, Trash2, LogOut, LogIn, EyeOff, Mail, BarChart3, Workflow } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { EmailComposer } from "@/components/EmailComposer";
+import { EmailAnalytics } from "@/components/EmailAnalytics";
+import { EmailSequenceManager } from "@/components/EmailSequenceManager";
 
 interface ScholarshipApplication {
   id: string;
@@ -108,6 +111,20 @@ const Admin = () => {
   const [linkText, setLinkText] = useState('');
   const [buttonUrl, setButtonUrl] = useState('');
   const [buttonText, setButtonText] = useState('');
+
+  // Email Management States
+  const [emailTemplates, setEmailTemplates] = useState<any[]>([]);
+  const [emailSequencesList, setEmailSequencesState] = useState<any[]>([]);
+  const [emailAnalytics, setEmailAnalytics] = useState<any>({
+    totalSent: 0,
+    totalDelivered: 0,
+    totalOpened: 0,
+    totalClicked: 0,
+    totalFailed: 0,
+    recentEmails: [],
+    openRateByDay: [],
+    campaignPerformance: []
+  });
 
   const { user, loading: authStateLoading, isAdmin, signOut, signIn } = useAuth();
   
@@ -875,7 +892,29 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="email-creator" className="space-y-6">
+          <TabsContent value="email-composer" className="space-y-6">
+            <EmailComposer
+              onSendEmail={handleSendEmails}
+              onSaveTemplate={handleSaveTemplate}
+              templates={emailTemplates}
+              recipients={applications.map(app => app.email)}
+              isLoading={isSendingEmails}
+            />
+          </TabsContent>
+
+          <TabsContent value="email-sequences" className="space-y-6">
+            <EmailSequenceManager
+              sequences={emailSequencesList}
+              onCreateSequence={handleCreateSequence}
+              onUpdateSequence={handleUpdateSequence}
+              onDeleteSequence={handleDeleteSequence}
+              onToggleSequence={handleToggleSequence}
+            />
+          </TabsContent>
+
+          <TabsContent value="email-analytics" className="space-y-6">
+            <EmailAnalytics analytics={emailAnalytics} />
+          </TabsContent>
             {/* Email Creator Header */}
             <div className="flex justify-between items-center">
               <div>
@@ -1396,9 +1435,91 @@ const Admin = () => {
           </CardContent>
         </Card>
           </TabsContent>
+
+          <TabsContent value="applications" className="space-y-8">
+            {/* Applications data content would go here */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Application Data</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Application data management interface</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
 
         {/* Add Link Modal */}
+        <Dialog open={isLinkModalOpen} onOpenChange={setIsLinkModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Hyperlink</DialogTitle>
+              <DialogDescription>Add a clickable link to your email content.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="linkUrl">URL</Label>
+                <Input
+                  id="linkUrl"
+                  placeholder="https://example.com"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="linkText">Link Text</Label>
+                <Input
+                  id="linkText"
+                  placeholder="Click here"
+                  value={linkText}
+                  onChange={(e) => setLinkText(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsLinkModalOpen(false)}>Cancel</Button>
+              <Button onClick={handleInsertLink} disabled={!linkUrl || !linkText}>Insert Link</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Button Modal */}
+        <Dialog open={isButtonModalOpen} onOpenChange={setIsButtonModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Button</DialogTitle>
+              <DialogDescription>Add a styled button to your email content.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="buttonUrl">Button URL</Label>
+                <Input
+                  id="buttonUrl"
+                  placeholder="https://example.com"
+                  value={buttonUrl}
+                  onChange={(e) => setButtonUrl(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="buttonText">Button Text</Label>
+                <Input
+                  id="buttonText"
+                  placeholder="Get Started"
+                  value={buttonText}
+                  onChange={(e) => setButtonText(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsButtonModalOpen(false)}>Cancel</Button>
+              <Button onClick={handleInsertButton} disabled={!buttonUrl || !buttonText}>Insert Button</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
+};
         <Dialog open={isLinkModalOpen} onOpenChange={setIsLinkModalOpen}>
           <DialogContent>
             <DialogHeader>
