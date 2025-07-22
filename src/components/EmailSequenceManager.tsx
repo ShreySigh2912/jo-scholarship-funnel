@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Play, Pause, Mail, Clock, Users, ArrowRight } from "lucide-react";
+import { Plus, Edit, Trash2, Play, Pause, Mail, Clock, Users, ArrowRight, Workflow } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { EmailSequenceBuilder } from "./EmailSequenceBuilder";
 
 interface EmailSequenceManagerProps {
   sequences: EmailSequence[];
@@ -63,6 +64,7 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
   onToggleSequence
 }) => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingSequence, setEditingSequence] = useState<EmailSequence | null>(null);
   const [newSequence, setNewSequence] = useState<Partial<EmailSequence>>({
     name: '',
@@ -109,6 +111,45 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
     });
   };
 
+  const handleSaveSequence = (sequenceData: any) => {
+    // Convert visual builder data to our sequence format
+    const emailNodes = sequenceData.nodes.filter((node: any) => node.type === 'email');
+    const delayNodes = sequenceData.nodes.filter((node: any) => node.type === 'delay');
+    
+    // Convert nodes to emails array
+    const emails: SequenceEmail[] = emailNodes.map((node: any, index: number) => ({
+      id: node.id,
+      name: node.data.subject || `Email ${index + 1}`,
+      subject: node.data.subject || 'Untitled Email',
+      content: node.data.content || '',
+      delay: 24, // Default delay
+      delayUnit: 'hours' as const,
+    }));
+
+    const sequence: EmailSequence = {
+      id: Date.now().toString(),
+      name: sequenceData.name,
+      description: 'Created with visual builder',
+      trigger: 'test_completion',
+      active: false,
+      emails,
+      createdAt: new Date().toISOString(),
+      stats: {
+        totalSent: 0,
+        activeRecipients: 0,
+        completionRate: 0
+      }
+    };
+
+    onCreateSequence(sequence);
+    setIsBuilderOpen(false);
+    
+    toast({
+      title: "Success",
+      description: "Email sequence created successfully!",
+    });
+  };
+
   const addEmailToSequence = (sequenceEmails: SequenceEmail[], newEmail: Partial<SequenceEmail>) => {
     const email: SequenceEmail = {
       ...newEmail as SequenceEmail,
@@ -131,68 +172,10 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
             Create automated email sequences that trigger based on user actions
           </p>
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Sequence
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Create Email Sequence</DialogTitle>
-              <DialogDescription>
-                Set up an automated email sequence that will trigger based on user actions.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="sequenceName">Sequence Name</Label>
-                <Input
-                  id="sequenceName"
-                  placeholder="e.g., Post-Test Follow-up"
-                  value={newSequence.name || ''}
-                  onChange={(e) => setNewSequence(prev => ({ ...prev, name: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="sequenceDescription">Description</Label>
-                <Input
-                  id="sequenceDescription"
-                  placeholder="Describe what this sequence does..."
-                  value={newSequence.description || ''}
-                  onChange={(e) => setNewSequence(prev => ({ ...prev, description: e.target.value }))}
-                />
-              </div>
-              <div>
-                <Label>Trigger</Label>
-                <Select 
-                  value={newSequence.trigger} 
-                  onValueChange={(value: any) => setNewSequence(prev => ({ ...prev, trigger: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {triggerOptions.map(option => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.icon} {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={createSequence}>
-                Create Sequence
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => setIsBuilderOpen(true)}>
+          <Workflow className="h-4 w-4 mr-2" />
+          Create Sequence
+        </Button>
       </div>
 
       {/* Sequences Overview */}
@@ -454,6 +437,25 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
                 Save Changes
               </Button>
             </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Visual Sequence Builder */}
+      {isBuilderOpen && (
+        <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
+          <DialogContent className="max-w-7xl h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>Create Email Sequence</DialogTitle>
+              <DialogDescription>
+                Build your email sequence visually by dragging and connecting email steps.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <EmailSequenceBuilder
+              onSave={handleSaveSequence}
+              onCancel={() => setIsBuilderOpen(false)}
+            />
           </DialogContent>
         </Dialog>
       )}

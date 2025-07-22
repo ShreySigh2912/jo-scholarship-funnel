@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { EmailComposer } from "@/components/EmailComposer";
 import { EmailAnalytics } from "@/components/EmailAnalytics";
 import { EmailSequenceManager } from "@/components/EmailSequenceManager";
+import { EmailSequenceBuilder } from "@/components/EmailSequenceBuilder";
 
 interface ScholarshipApplication {
   id: string;
