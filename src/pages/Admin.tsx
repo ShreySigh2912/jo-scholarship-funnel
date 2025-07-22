@@ -877,33 +877,68 @@ const Admin = () => {
                                     </CardHeader>
                                     <CardContent>
                                       <div className="space-y-4">
-                                        {quizResponses.map((response, index) => (
-                                          <div key={response.id} className="border rounded-lg p-4">
-                                            <div className="flex justify-between items-start mb-2">
-                                              <h4 className="font-medium">Question {index + 1}</h4>
-                                              <Badge variant={response.is_correct ? 'default' : 'destructive'}>
-                                                {response.is_correct ? 'Correct' : 'Wrong'}
-                                              </Badge>
-                                            </div>
-                                            <div className="space-y-2">
-                                              <div>
-                                                <span className="text-sm font-medium text-muted-foreground">Section:</span>
-                                                <span className="ml-2">{response.section_name}</span>
-                                              </div>
-                                              <div>
-                                                <span className="text-sm font-medium text-muted-foreground">Question:</span>
-                                                <p className="mt-1">{response.question_text}</p>
-                                              </div>
-                                              <div>
-                                                <span className="text-sm font-medium text-muted-foreground">Answer:</span>
-                                                <span className="ml-2 font-medium">{response.answer}</span>
-                                              </div>
-                                              <div className="text-xs text-muted-foreground">
-                                                Answered at: {new Date(response.answered_at).toLocaleString()}
-                                              </div>
-                                            </div>
-                                          </div>
-                                        ))}
+                                         {quizResponses.map((response, index) => (
+                                           <div key={response.id} className="border rounded-lg p-4">
+                                             <div className="flex justify-between items-start mb-2">
+                                               <h4 className="font-medium">Question {index + 1}</h4>
+                                               {response.is_correct !== null && (
+                                                 <Badge variant={response.is_correct ? 'default' : 'destructive'}>
+                                                   {response.is_correct ? 'Correct' : 'Wrong'}
+                                                 </Badge>
+                                               )}
+                                               {response.is_correct === null && (
+                                                 <Badge variant="secondary">
+                                                   Subjective
+                                                 </Badge>
+                                               )}
+                                             </div>
+                                             <div className="space-y-2">
+                                               <div>
+                                                 <span className="text-sm font-medium text-muted-foreground">Section:</span>
+                                                 <span className="ml-2">{response.section_name}</span>
+                                               </div>
+                                               <div>
+                                                 <span className="text-sm font-medium text-muted-foreground">Question:</span>
+                                                 <p className="mt-1">{response.question_text}</p>
+                                               </div>
+                                               <div>
+                                                 <span className="text-sm font-medium text-muted-foreground">Student Answer:</span>
+                                                 <div className="mt-1 p-3 bg-muted rounded-md">
+                                                   <p className="font-medium">{response.answer}</p>
+                                                 </div>
+                                               </div>
+                                               
+                                               {/* Show expected answers for subjective questions */}
+                                               {response.question_type !== 'mcq' && (
+                                                 <div>
+                                                   <span className="text-sm font-medium text-muted-foreground">Expected Answer Guidelines:</span>
+                                                   <div className="mt-1 p-3 bg-secondary/20 rounded-md border border-secondary/30">
+                                                     {(() => {
+                                                       const questionId = response.question_id;
+                                                       const expectedAnswers = {
+                                                         'sub1': 'Should demonstrate clear career goals, understanding of MBA value, and specific ways the degree will advance their career. Look for: passion for business, leadership aspirations, skill gaps MBA will fill, and post-MBA career plans.',
+                                                         'sub2': 'Should be professional, concise, and appreciative. Must include: proper subject line, formal salutation, specific appreciation for support, acknowledgment of team lead\'s contribution, and professional closing.',
+                                                         'sub3': 'Should be confident, clear, and memorable. Must include: name, current role/background, key achievement or skill, what makes them unique, and enthusiasm for MBA program.',
+                                                         'sub4': 'Should demonstrate accountability, problem-solving, and client focus. Look for: acknowledging the issue, explaining steps to resolve, timeline for completion, and measures to prevent future delays.',
+                                                         'sub5': 'No correct answer - this is preference based. Look for thoughtful consideration of their career goals and interests.'
+                                                       };
+                                                       
+                                                       return (
+                                                         <p className="text-sm text-muted-foreground italic">
+                                                           {expectedAnswers[questionId as keyof typeof expectedAnswers] || 'No specific guidelines available for this question.'}
+                                                         </p>
+                                                       );
+                                                     })()}
+                                                   </div>
+                                                 </div>
+                                               )}
+                                               
+                                               <div className="text-xs text-muted-foreground">
+                                                 Answered at: {new Date(response.answered_at).toLocaleString()}
+                                               </div>
+                                             </div>
+                                           </div>
+                                         ))}
                                       </div>
                                     </CardContent>
                                   </Card>
