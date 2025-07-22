@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -11,7 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { Eye, Plus, Trash2 } from "lucide-react";
+import { Eye, Plus, Trash2, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ScholarshipApplication {
   id: string;
@@ -91,9 +93,21 @@ const Admin = () => {
   const [isDeleteQuestionOpen, setIsDeleteQuestionOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState('');
 
+  const { user, loading: authLoading, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if not authenticated or not admin
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!authLoading && (!user || !isAdmin)) {
+      navigate('/auth');
+    }
+  }, [user, isAdmin, authLoading, navigate]);
+
+  useEffect(() => {
+    if (user && isAdmin) {
+      fetchData();
+    }
+  }, [user, isAdmin]);
 
   const fetchData = async () => {
     try {
@@ -289,7 +303,8 @@ const Admin = () => {
     return emailSequences.find(sequence => sequence.application_id === applicationId);
   };
 
-  if (loading) {
+  // Show loading while checking authentication
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -300,10 +315,26 @@ const Admin = () => {
     );
   }
 
+  // Don't render anything if not authenticated or not admin (redirect will happen)
+  if (!user || !isAdmin) {
+    return null;
+  }
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+          <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
         
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
