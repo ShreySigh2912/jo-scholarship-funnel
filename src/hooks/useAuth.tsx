@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (session?.user) {
           setTimeout(() => {
             checkAdminRole(session.user.id);
-          }, 0);
+          }, 100); // Slightly longer delay to ensure database is updated
         } else {
           setIsAdmin(false);
         }
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         setTimeout(() => {
           checkAdminRole(session.user.id);
-        }, 0);
+        }, 100);
       }
       
       setLoading(false);
@@ -64,14 +64,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .select('role')
         .eq('user_id', userId)
         .eq('role', 'admin')
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to avoid errors when no data
 
+      console.log('Admin role check:', { data, error, userId });
+      
       if (!error && data) {
         setIsAdmin(true);
+        console.log('User is admin');
       } else {
         setIsAdmin(false);
+        console.log('User is not admin or no role found');
       }
     } catch (error) {
+      console.error('Error checking admin role:', error);
       setIsAdmin(false);
     }
   };
