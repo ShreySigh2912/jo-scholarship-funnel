@@ -92,6 +92,15 @@ const Admin = () => {
   const [isDeleteQuestionOpen, setIsDeleteQuestionOpen] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState('');
 
+  // Email Creator State
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailContent, setEmailContent] = useState('');
+  const [emailTrigger, setEmailTrigger] = useState('immediate');
+  const [emailTriggerDelay, setEmailTriggerDelay] = useState(0);
+  const [isEmailCreatorOpen, setIsEmailCreatorOpen] = useState(false);
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [isSendingEmails, setIsSendingEmails] = useState(false);
+
   const { user, loading: authStateLoading, isAdmin, signOut, signIn } = useAuth();
   
   // Auth form state
@@ -362,6 +371,79 @@ const Admin = () => {
     await signOut();
   };
 
+  // Email Creator Functions
+  const insertHyperlink = () => {
+    const link = prompt('Enter the URL:');
+    const text = prompt('Enter the link text:');
+    if (link && text) {
+      const hyperlink = `<a href="${link}" style="color: #4c51bf; text-decoration: underline;">${text}</a>`;
+      setEmailContent(prev => prev + hyperlink);
+    }
+  };
+
+  const insertButton = () => {
+    const link = prompt('Enter the button URL:');
+    const text = prompt('Enter the button text:');
+    if (link && text) {
+      const button = `<a href="${link}" style="display: inline-block; background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;">${text}</a>`;
+      setEmailContent(prev => prev + button);
+    }
+  };
+
+  const handleSendEmails = async () => {
+    if (!emailSubject.trim() || !emailContent.trim() || selectedEmails.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields and select recipients.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSendingEmails(true);
+    try {
+      const { error } = await supabase.functions.invoke('send-custom-email', {
+        body: {
+          subject: emailSubject,
+          content: emailContent,
+          emails: selectedEmails,
+          trigger: emailTrigger,
+          delay: emailTriggerDelay
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Emails ${emailTrigger === 'immediate' ? 'sent' : 'scheduled'} successfully!`,
+      });
+
+      // Reset form
+      setEmailSubject('');
+      setEmailContent('');
+      setSelectedEmails([]);
+      setIsEmailCreatorOpen(false);
+    } catch (error) {
+      console.error('Error sending emails:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send emails. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSendingEmails(false);
+    }
+  };
+
+  const handleEmailSelection = (email: string, checked: boolean) => {
+    if (checked) {
+      setSelectedEmails(prev => [...prev, email]);
+    } else {
+      setSelectedEmails(prev => prev.filter(e => e !== email));
+    }
+  };
+
   // Show loading while checking authentication
   if (authStateLoading) {
     return (
@@ -463,9 +545,10 @@ const Admin = () => {
         </div>
         
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="questions">Manage Questions</TabsTrigger>
+            <TabsTrigger value="email-creator">Email Creator</TabsTrigger>
             <TabsTrigger value="data">Application Data</TabsTrigger>
           </TabsList>
           
@@ -738,6 +821,267 @@ const Admin = () => {
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="email-creator" className="space-y-6">
+            {/* Email Creator Header */}
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold">Email Creator</h2>
+                <p className="text-muted-foreground">Create and send custom emails to applicants</p>
+              </div>
+              <Dialog open={isEmailCreatorOpen} onOpenChange={setIsEmailCreatorOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Email
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Create Custom Email</DialogTitle>
+                    <DialogDescription>
+                      Compose and send custom emails to selected recipients
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-6">
+                    {/* Email Subject */}
+                    <div className="space-y-2">
+                      <Label htmlFor="email-subject">Email Subject</Label>
+                      <Input
+                        id="email-subject"
+                        value={emailSubject}
+                        onChange={(e) => setEmailSubject(e.target.value)}
+                        placeholder="Enter email subject..."
+                      />
+                    </div>
+
+                    {/* Email Content */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="email-content">Email Content</Label>
+                        <div className="flex gap-2">
+                          <Button type="button" variant="outline" size="sm" onClick={insertHyperlink}>
+                            Add Link
+                          </Button>
+                          <Button type="button" variant="outline" size="sm" onClick={insertButton}>
+                            Add Button
+                          </Button>
+                        </div>
+                      </div>
+                      <Textarea
+                        id="email-content"
+                        value={emailContent}
+                        onChange={(e) => setEmailContent(e.target.value)}
+                        placeholder="Compose your email content here... You can use HTML for formatting."
+                        className="min-h-[200px]"
+                      />
+                      <div className="text-sm text-muted-foreground">
+                        Tip: You can use HTML tags for formatting. Use the buttons above to add links and buttons.
+                      </div>
+                    </div>
+
+                    {/* Email Preview */}
+                    {emailContent && (
+                      <div className="space-y-2">
+                        <Label>Email Preview</Label>
+                        <div 
+                          className="p-4 border rounded-lg bg-background max-h-[200px] overflow-y-auto"
+                          dangerouslySetInnerHTML={{ __html: emailContent }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Trigger Settings */}
+                    <div className="space-y-4">
+                      <Label>Email Trigger Settings</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="trigger-type">Trigger Type</Label>
+                          <Select value={emailTrigger} onValueChange={setEmailTrigger}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="immediate">Send Immediately</SelectItem>
+                              <SelectItem value="delayed">Send After Delay</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {emailTrigger === 'delayed' && (
+                          <div className="space-y-2">
+                            <Label htmlFor="delay-hours">Delay (Hours)</Label>
+                            <Input
+                              id="delay-hours"
+                              type="number"
+                              min="1"
+                              value={emailTriggerDelay}
+                              onChange={(e) => setEmailTriggerDelay(Number(e.target.value))}
+                              placeholder="Hours to wait..."
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Recipients Selection */}
+                    <div className="space-y-4">
+                      <Label>Select Recipients</Label>
+                      <div className="max-h-[200px] overflow-y-auto border rounded-lg p-4 space-y-2">
+                        <div className="flex items-center space-x-2 font-medium border-b pb-2">
+                          <input
+                            type="checkbox"
+                            id="select-all"
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedEmails(applications.map(app => app.email));
+                              } else {
+                                setSelectedEmails([]);
+                              }
+                            }}
+                            checked={selectedEmails.length === applications.length}
+                          />
+                          <label htmlFor="select-all">Select All ({applications.length})</label>
+                        </div>
+                        {applications.map((application) => (
+                          <div key={application.id} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={application.id}
+                              checked={selectedEmails.includes(application.email)}
+                              onChange={(e) => handleEmailSelection(application.email, e.target.checked)}
+                            />
+                            <label htmlFor={application.id} className="text-sm">
+                              {application.name} ({application.email})
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {selectedEmails.length} recipient(s) selected
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex justify-end gap-2 pt-4 border-t">
+                      <Button variant="outline" onClick={() => setIsEmailCreatorOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleSendEmails} disabled={isSendingEmails}>
+                        {isSendingEmails ? 'Sending...' : (emailTrigger === 'immediate' ? 'Send Now' : 'Schedule Email')}
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {/* Email Templates Quick Access */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Email Templates</CardTitle>
+                <CardDescription>Pre-built email templates for common scenarios</CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-auto p-4 flex flex-col items-start"
+                  onClick={() => {
+                    setEmailSubject('Welcome to MBA Scholarship Program');
+                    setEmailContent(`<div style="font-family: Arial, sans-serif; max-width: 600px;">
+                      <h2 style="color: #4c51bf;">Welcome to the MBA Scholarship Program!</h2>
+                      <p>Dear Applicant,</p>
+                      <p>Thank you for your interest in our MBA Scholarship Program. We're excited to have you on board!</p>
+                      <a href="#" style="display: inline-block; background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;">Get Started</a>
+                      <p>Best regards,<br>MBA Team</p>
+                    </div>`);
+                    setIsEmailCreatorOpen(true);
+                  }}
+                >
+                  <h3 className="font-semibold">Welcome Email</h3>
+                  <p className="text-sm text-muted-foreground">Greeting for new applicants</p>
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="h-auto p-4 flex flex-col items-start"
+                  onClick={() => {
+                    setEmailSubject('Important Update Regarding Your Application');
+                    setEmailContent(`<div style="font-family: Arial, sans-serif; max-width: 600px;">
+                      <h2 style="color: #dc3545;">Important Update</h2>
+                      <p>Dear Applicant,</p>
+                      <p>We have an important update regarding your scholarship application. Please review the details below:</p>
+                      <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #dc3545; margin: 20px 0;">
+                        <p style="margin: 0; font-weight: bold;">Your application status has been updated.</p>
+                      </div>
+                      <a href="#" style="display: inline-block; background: linear-gradient(135deg, #dc3545, #c82333); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;">View Update</a>
+                      <p>Best regards,<br>MBA Team</p>
+                    </div>`);
+                    setIsEmailCreatorOpen(true);
+                  }}
+                >
+                  <h3 className="font-semibold">Application Update</h3>
+                  <p className="text-sm text-muted-foreground">Status update notification</p>
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="h-auto p-4 flex flex-col items-start"
+                  onClick={() => {
+                    setEmailSubject('🎉 Congratulations! Scholarship Awarded');
+                    setEmailContent(`<div style="font-family: Arial, sans-serif; max-width: 600px;">
+                      <h2 style="color: #38a169;">🎉 Congratulations!</h2>
+                      <p>Dear Applicant,</p>
+                      <p>We are delighted to inform you that you have been selected for our MBA Scholarship Program!</p>
+                      <div style="background: linear-gradient(135deg, #48bb78, #38a169); color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;">
+                        <h3 style="margin: 0;">Scholarship Awarded: ₹5,000</h3>
+                      </div>
+                      <a href="#" style="display: inline-block; background: linear-gradient(135deg, #38a169, #48bb78); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;">Accept Scholarship</a>
+                      <p>Congratulations and best regards,<br>MBA Team</p>
+                    </div>`);
+                    setIsEmailCreatorOpen(true);
+                  }}
+                >
+                  <h3 className="font-semibold">Scholarship Award</h3>
+                  <p className="text-sm text-muted-foreground">Congratulations message</p>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Email Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Total Recipients</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary">{applications.length}</div>
+                  <p className="text-sm text-muted-foreground">Available email addresses</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Email Sequences</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary">{emailSequences.length}</div>
+                  <p className="text-sm text-muted-foreground">Active email sequences</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Links Clicked</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary">
+                    {emailSequences.filter(seq => seq.link_clicked).length}
+                  </div>
+                  <p className="text-sm text-muted-foreground">Email engagement rate</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="data" className="space-y-8">
