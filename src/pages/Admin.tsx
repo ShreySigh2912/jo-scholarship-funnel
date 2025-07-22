@@ -41,6 +41,8 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState<ScholarshipApplication[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [quizSessions, setQuizSessions] = useState<any[]>([]);
+  const [emailSequencesData, setEmailSequencesData] = useState<any[]>([]);
   
   // Email Management States
   const [emailTemplates, setEmailTemplates] = useState<any[]>([]);
@@ -98,6 +100,24 @@ const Admin = () => {
             ? [String(q.options)] 
             : null
       })) || []);
+
+      // Fetch quiz sessions
+      const { data: quizSessionsData, error: quizSessionsError } = await supabase
+        .from('quiz_sessions')
+        .select('*')
+        .order('started_at', { ascending: false });
+
+      if (quizSessionsError) throw quizSessionsError;
+      setQuizSessions(quizSessionsData || []);
+
+      // Fetch email sequences
+      const { data: emailSequencesData, error: emailSequencesError } = await supabase
+        .from('email_sequences')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (emailSequencesError) throw emailSequencesError;
+      setEmailSequencesData(emailSequencesData || []);
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -424,10 +444,11 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="applications" className="space-y-6">
+            {/* Scholarship Applications */}
             <Card>
               <CardHeader>
-                <CardTitle>Application Data</CardTitle>
-                <CardDescription>Manage scholarship applications</CardDescription>
+                <CardTitle>Scholarship Applications</CardTitle>
+                <CardDescription>All applicants and their quiz status</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -436,18 +457,127 @@ const Admin = () => {
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
-                      <TableHead>Applied Date</TableHead>
+                      <TableHead>Applied At</TableHead>
+                      <TableHead>Quiz Status</TableHead>
+                      <TableHead>Quiz Score</TableHead>
+                      <TableHead>Email Stage</TableHead>
+                      <TableHead>Last Email</TableHead>
+                      <TableHead>Link Clicked</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {applications.map((application) => (
-                      <TableRow key={application.id}>
-                        <TableCell className="font-medium">{application.name}</TableCell>
-                        <TableCell>{application.email}</TableCell>
-                        <TableCell>{application.phone}</TableCell>
-                        <TableCell>{new Date(application.created_at).toLocaleDateString()}</TableCell>
-                      </TableRow>
-                    ))}
+                    {applications.map((application) => {
+                      const quizSession = quizSessions.find(session => session.application_id === application.id);
+                      const emailSequence = emailSequencesData.find(seq => seq.application_id === application.id);
+                      
+                      return (
+                        <TableRow key={application.id}>
+                          <TableCell className="font-medium">{application.name}</TableCell>
+                          <TableCell>{application.email}</TableCell>
+                          <TableCell>{application.phone}</TableCell>
+                          <TableCell>{new Date(application.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell>
+                            {quizSession ? (
+                              <Badge variant={quizSession.status === 'completed' ? 'default' : 
+                                            quizSession.status === 'in_progress' ? 'secondary' : 'outline'}>
+                                {quizSession.status}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline">-</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {quizSession?.status === 'completed' ? quizSession.total_score : '-'}
+                          </TableCell>
+                          <TableCell>
+                            {emailSequence ? (
+                              <Badge variant="secondary">
+                                Stage {emailSequence.sequence_stage}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline">No Emails</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {emailSequence?.last_email_sent_at 
+                              ? new Date(emailSequence.last_email_sent_at).toLocaleDateString()
+                              : 'None'
+                            }
+                          </TableCell>
+                          <TableCell>
+                            {emailSequence?.link_clicked ? (
+                              <Badge variant="default">Yes</Badge>
+                            ) : (
+                              <Badge variant="destructive">No</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Quiz Sessions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Quiz Sessions</CardTitle>
+                <CardDescription>Detailed quiz session information</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Applicant Name</TableHead>
+                      <TableHead>Session ID</TableHead>
+                      <TableHead>Application ID</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Score</TableHead>
+                      <TableHead>Started At</TableHead>
+                      <TableHead>Completed At</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {quizSessions.map((session) => {
+                      const application = applications.find(app => app.id === session.application_id);
+                      
+                      return (
+                        <TableRow key={session.id}>
+                          <TableCell className="font-medium">
+                            {application?.name || 'Unknown'}
+                          </TableCell>
+                          <TableCell className="font-mono text-sm">
+                            {session.id.substring(0, 8)}...
+                          </TableCell>
+                          <TableCell className="font-mono text-sm">
+                            {session.application_id.substring(0, 8)}...
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={session.status === 'completed' ? 'default' : 
+                                          session.status === 'in_progress' ? 'secondary' : 'outline'}>
+                              {session.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{session.total_score || 0}</TableCell>
+                          <TableCell>
+                            {new Date(session.started_at).toLocaleString()}
+                          </TableCell>
+                          <TableCell>
+                            {session.completed_at 
+                              ? new Date(session.completed_at).toLocaleString() 
+                              : '-'
+                            }
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </CardContent>
