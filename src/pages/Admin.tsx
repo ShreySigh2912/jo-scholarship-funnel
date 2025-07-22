@@ -373,20 +373,50 @@ const Admin = () => {
 
   // Email Creator Functions
   const insertHyperlink = () => {
-    const link = prompt('Enter the URL:');
+    const link = prompt('Enter the URL (include https://):');
     const text = prompt('Enter the link text:');
     if (link && text) {
-      const hyperlink = `<a href="${link}" style="color: #4c51bf; text-decoration: underline;">${text}</a>`;
-      setEmailContent(prev => prev + hyperlink);
+      const hyperlink = `<a href="${link}" style="color: #4c51bf; text-decoration: underline;" target="_blank">${text}</a>`;
+      const textarea = document.querySelector('textarea[placeholder*="email content"]') as HTMLTextAreaElement;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const currentContent = emailContent;
+        const newContent = currentContent.substring(0, start) + hyperlink + currentContent.substring(end);
+        setEmailContent(newContent);
+        
+        // Set cursor position after the inserted hyperlink
+        setTimeout(() => {
+          textarea.setSelectionRange(start + hyperlink.length, start + hyperlink.length);
+          textarea.focus();
+        }, 10);
+      } else {
+        setEmailContent(prev => prev + hyperlink);
+      }
     }
   };
 
   const insertButton = () => {
-    const link = prompt('Enter the button URL:');
+    const link = prompt('Enter the button URL (include https://):');
     const text = prompt('Enter the button text:');
     if (link && text) {
-      const button = `<a href="${link}" style="display: inline-block; background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;">${text}</a>`;
-      setEmailContent(prev => prev + button);
+      const button = `<div style="text-align: center; margin: 20px 0;"><a href="${link}" style="display: inline-block; background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 10px 0;" target="_blank">${text}</a></div>`;
+      const textarea = document.querySelector('textarea[placeholder*="email content"]') as HTMLTextAreaElement;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const currentContent = emailContent;
+        const newContent = currentContent.substring(0, start) + button + currentContent.substring(end);
+        setEmailContent(newContent);
+        
+        // Set cursor position after the inserted button
+        setTimeout(() => {
+          textarea.setSelectionRange(start + button.length, start + button.length);
+          textarea.focus();
+        }, 10);
+      } else {
+        setEmailContent(prev => prev + button);
+      }
     }
   };
 
