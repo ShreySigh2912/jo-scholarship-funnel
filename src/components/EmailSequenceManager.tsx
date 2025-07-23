@@ -20,15 +20,13 @@ interface EmailSequenceManagerProps {
   onToggleSequence: (sequenceId: string, active: boolean) => void;
 }
 
-// Update EmailSequence type to support multiple triggers and node connections
 interface EmailSequence {
   id: string;
   name: string;
   description: string;
-  triggers: string[]; // Multiple triggers
+  trigger: 'test_completion' | 'application_submitted' | 'manual' | 'scheduled';
   active: boolean;
   emails: SequenceEmail[];
-  connections: SequenceConnection[]; // Node connections
   createdAt: string;
   stats: {
     totalSent: number;
@@ -37,14 +35,6 @@ interface EmailSequence {
   };
 }
 
-// Connection between nodes (by id)
-interface SequenceConnection {
-  from: string; // node id
-  to: string;   // node id
-  condition?: string; // optional, for future branching/logic
-}
-
-// Update SequenceEmail as before
 interface SequenceEmail {
   id: string;
   name: string;
@@ -59,13 +49,11 @@ interface SequenceEmail {
   };
 }
 
-// Update trigger options to be more flexible
 const triggerOptions = [
   { value: 'test_completion', label: 'After Test Completion', icon: '🎯' },
   { value: 'application_submitted', label: 'After Application Submitted', icon: '📝' },
   { value: 'manual', label: 'Manual Trigger', icon: '👤' },
   { value: 'scheduled', label: 'Scheduled', icon: '⏰' },
-  { value: 'custom_event', label: 'Custom Event', icon: '⚡' },
 ];
 
 export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
@@ -78,14 +66,12 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingSequence, setEditingSequence] = useState<EmailSequence | null>(null);
-  // Update newSequence initial state
   const [newSequence, setNewSequence] = useState<Partial<EmailSequence>>({
     name: '',
     description: '',
-    triggers: [],
+    trigger: 'test_completion',
     active: false,
-    emails: [],
-    connections: []
+    emails: []
   });
 
   const createSequence = () => {
@@ -106,19 +92,16 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
         totalSent: 0,
         activeRecipients: 0,
         completionRate: 0
-      },
-      triggers: newSequence.triggers || [],
-      connections: newSequence.connections || [],
+      }
     };
 
     onCreateSequence(sequence);
     setNewSequence({
       name: '',
       description: '',
-      triggers: [],
+      trigger: 'test_completion',
       active: false,
-      emails: [],
-      connections: []
+      emails: []
     });
     setIsCreateOpen(false);
     
@@ -132,7 +115,7 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
     // Convert visual builder data to our sequence format
     const emailNodes = sequenceData.nodes.filter((node: any) => node.type === 'email');
     const delayNodes = sequenceData.nodes.filter((node: any) => node.type === 'delay');
-
+    
     // Convert nodes to emails array
     const emails: SequenceEmail[] = emailNodes.map((node: any, index: number) => ({
       id: node.id,
@@ -143,18 +126,11 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
       delayUnit: 'hours' as const,
     }));
 
-    // Extract connections from edges
-    const connections: SequenceConnection[] = (sequenceData.edges || []).map((edge: any) => ({
-      from: edge.source,
-      to: edge.target,
-      condition: edge.data?.condition || undefined,
-    }));
-
     const sequence: EmailSequence = {
       id: Date.now().toString(),
       name: sequenceData.name,
       description: 'Created with visual builder',
-      triggers: sequenceData.triggers || [],
+      trigger: 'test_completion',
       active: false,
       emails,
       createdAt: new Date().toISOString(),
@@ -162,13 +138,12 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
         totalSent: 0,
         activeRecipients: 0,
         completionRate: 0
-      },
-      connections,
+      }
     };
 
     onCreateSequence(sequence);
     setIsBuilderOpen(false);
-
+    
     toast({
       title: "Success",
       description: "Email sequence created successfully!",
@@ -278,7 +253,7 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
-                      {sequence.triggers.map(t => triggerOptions.find(opt => opt.value === t)?.label).join(', ')}
+                      {triggerOptions.find(opt => opt.value === sequence.trigger)?.label}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -402,25 +377,19 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
                     <Input value={editingSequence.description} />
                   </div>
                   <div>
-                    <Label>Triggers</Label>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {triggerOptions.map(option => (
-                        <label key={option.value} className="flex items-center gap-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={editingSequence?.triggers.includes(option.value) ?? false}
-                            onChange={e => {
-                              if (!editingSequence) return;
-                              const triggers = editingSequence.triggers.includes(option.value)
-                                ? editingSequence.triggers.filter(t => t !== option.value)
-                                : [...editingSequence.triggers, option.value];
-                              setEditingSequence({ ...editingSequence, triggers });
-                            }}
-                          />
-                          <span>{option.icon} {option.label}</span>
-                        </label>
-                      ))}
-                    </div>
+                    <Label>Trigger</Label>
+                    <Select value={editingSequence.trigger}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {triggerOptions.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.icon} {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </TabsContent>
@@ -482,8 +451,8 @@ export const EmailSequenceManager: React.FC<EmailSequenceManagerProps> = ({
                 Build your email sequence visually by dragging and connecting email steps.
               </DialogDescription>
             </DialogHeader>
+            
             <EmailSequenceBuilder
-              triggers={newSequence.triggers || []}
               onSave={handleSaveSequence}
               onCancel={() => setIsBuilderOpen(false)}
             />

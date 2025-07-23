@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Bold, Italic, Underline, Link, Image, AlignLeft, AlignCenter, AlignRight, List, ListOrdered, Type, Mail, UserPlus, Calendar, Send, Clock, Save, Eye } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface EmailComposerProps {
   onSendEmail: (emailData: EmailData) => void;
@@ -97,12 +96,6 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
   const [templateName, setTemplateName] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
-  const [showLinkDialog, setShowLinkDialog] = useState(false);
-  const [showButtonDialog, setShowButtonDialog] = useState(false);
-  const [linkText, setLinkText] = useState('');
-  const [linkUrl, setLinkUrl] = useState('');
-  const [buttonText, setButtonText] = useState('');
-  const [buttonUrl, setButtonUrl] = useState('');
   
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
@@ -137,39 +130,6 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
         textarea.focus();
       }, 10);
     }
-  };
-
-  // Insert HTML at cursor
-  const insertAtCursor = (html: string) => {
-    if (contentRef.current) {
-      const textarea = contentRef.current;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const newContent = content.substring(0, start) + html + content.substring(end);
-      setContent(newContent);
-      setTimeout(() => {
-        textarea.setSelectionRange(start + html.length, start + html.length);
-        textarea.focus();
-      }, 10);
-    }
-  };
-
-  // Insert Link
-  const handleInsertLink = () => {
-    if (!linkText || !linkUrl) return;
-    insertAtCursor(`<a href=\"${linkUrl}\" target=\"_blank\">${linkText}</a>`);
-    setShowLinkDialog(false);
-    setLinkText('');
-    setLinkUrl('');
-  };
-
-  // Insert Button
-  const handleInsertButton = () => {
-    if (!buttonText || !buttonUrl) return;
-    insertAtCursor(`<a href=\"${buttonUrl}\" target=\"_blank\" style=\"background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 28px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;\">${buttonText}</a>`);
-    setShowButtonDialog(false);
-    setButtonText('');
-    setButtonUrl('');
   };
 
   const loadTemplate = (templateId: string) => {
@@ -369,12 +329,6 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
               <Button size="sm" variant="ghost" onClick={() => insertFormatting('ol')}>
                 <ListOrdered className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => setShowLinkDialog(true)}>
-                <Link className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="ghost" onClick={() => setShowButtonDialog(true)}>
-                <span className="font-bold text-xs">Btn</span>
-              </Button>
             </div>
             <Textarea
               ref={contentRef}
@@ -509,38 +463,6 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
           </div>
         </CardContent>
       </Card>
-      {/* Link Dialog */}
-      <Dialog open={showLinkDialog} onOpenChange={setShowLinkDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Insert Link</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-2">
-            <Input placeholder="Link text" value={linkText} onChange={e => setLinkText(e.target.value)} />
-            <Input placeholder="URL (https://...)" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} />
-            <div className="flex justify-end gap-2 mt-2">
-              <Button variant="outline" onClick={() => setShowLinkDialog(false)}>Cancel</Button>
-              <Button onClick={handleInsertLink} disabled={!linkText || !linkUrl}>Insert</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      {/* Button Dialog */}
-      <Dialog open={showButtonDialog} onOpenChange={setShowButtonDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Insert Button</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-2">
-            <Input placeholder="Button text" value={buttonText} onChange={e => setButtonText(e.target.value)} />
-            <Input placeholder="Button URL (https://...)" value={buttonUrl} onChange={e => setButtonUrl(e.target.value)} />
-            <div className="flex justify-end gap-2 mt-2">
-              <Button variant="outline" onClick={() => setShowButtonDialog(false)}>Cancel</Button>
-              <Button onClick={handleInsertButton} disabled={!buttonText || !buttonUrl}>Insert</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

@@ -11,8 +11,6 @@ import {
   Node,
   NodeTypes,
   EdgeTypes,
-  Handle,
-  Position,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Button } from '@/components/ui/button';
@@ -24,98 +22,73 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Mail, Clock, Zap, Plus } from 'lucide-react';
 
-// Node Types with handles and delete button
-const TriggerNode = ({ data, id, onDelete, canDelete }: { data: any, id: string, onDelete: (id: string) => void, canDelete: boolean }) => (
-  <Card className="p-4 min-w-[200px] border-2 border-primary relative">
-    <Handle type="source" position={Position.Bottom} />
-    <div className="flex items-center gap-2 mb-2">
-      <Zap className="w-4 h-4 text-primary" />
-      <span className="font-medium">Trigger</span>
-      {canDelete && (
-        <button className="ml-auto text-xs text-red-500" onClick={() => onDelete(id)} title="Delete Trigger">✕</button>
-      )}
-    </div>
-    <div className="text-sm text-muted-foreground">{data.label}</div>
-  </Card>
-);
-
-const EmailNode = ({ data, id, onDelete }: { data: any, id: string, onDelete: (id: string) => void }) => (
-  <Card className="p-4 min-w-[200px] border-2 border-green-500 relative">
-    <Handle type="target" position={Position.Top} />
-    <Handle type="source" position={Position.Bottom} />
-    <div className="flex items-center gap-2 mb-2">
-      <Mail className="w-4 h-4 text-green-500" />
-      <span className="font-medium">Send Email</span>
-      <button className="ml-auto text-xs text-red-500" onClick={() => onDelete(id)} title="Delete Email">✕</button>
-    </div>
-    <div className="text-sm text-muted-foreground">{data.subject || 'Email Subject'}</div>
-    <div className="text-xs text-muted-foreground mt-1">{data.description}</div>
-  </Card>
-);
-
-const DelayNode = ({ data, id, onDelete }: { data: any, id: string, onDelete: (id: string) => void }) => (
-  <Card className="p-4 min-w-[200px] border-2 border-orange-500 relative">
-    <Handle type="target" position={Position.Top} />
-    <Handle type="source" position={Position.Bottom} />
-    <div className="flex items-center gap-2 mb-2">
-      <Clock className="w-4 h-4 text-orange-500" />
-      <span className="font-medium">Wait</span>
-      <button className="ml-auto text-xs text-red-500" onClick={() => onDelete(id)} title="Delete Delay">✕</button>
-    </div>
-    <div className="text-sm text-muted-foreground">{data.duration || '15 Minutes'}</div>
-  </Card>
-);
-
-const nodeTypes: NodeTypes = {
-  trigger: (props) => <TriggerNode {...props} canDelete={props.data.canDelete} onDelete={props.data.onDelete} />, // pass canDelete and onDelete
-  email: (props) => <EmailNode {...props} onDelete={props.data.onDelete} />,
-  delay: (props) => <DelayNode {...props} onDelete={props.data.onDelete} />,
+// Node Types
+const TriggerNode = ({ data }: { data: any }) => {
+  return (
+    <Card className="p-4 min-w-[200px] border-2 border-primary">
+      <div className="flex items-center gap-2 mb-2">
+        <Zap className="w-4 h-4 text-primary" />
+        <span className="font-medium">Trigger</span>
+      </div>
+      <div className="text-sm text-muted-foreground">{data.label}</div>
+    </Card>
+  );
 };
 
-export const EmailSequenceBuilder: React.FC<EmailSequenceBuilderProps> = ({ triggers, onSave, onCancel }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+const EmailNode = ({ data }: { data: any }) => {
+  return (
+    <Card className="p-4 min-w-[200px] border-2 border-green-500">
+      <div className="flex items-center gap-2 mb-2">
+        <Mail className="w-4 h-4 text-green-500" />
+        <span className="font-medium">Send Email</span>
+      </div>
+      <div className="text-sm text-muted-foreground">{data.subject || 'Email Subject'}</div>
+      <div className="text-xs text-muted-foreground mt-1">{data.description}</div>
+    </Card>
+  );
+};
+
+const DelayNode = ({ data }: { data: any }) => {
+  return (
+    <Card className="p-4 min-w-[200px] border-2 border-orange-500">
+      <div className="flex items-center gap-2 mb-2">
+        <Clock className="w-4 h-4 text-orange-500" />
+        <span className="font-medium">Wait</span>
+      </div>
+      <div className="text-sm text-muted-foreground">{data.duration || '15 Minutes'}</div>
+    </Card>
+  );
+};
+
+const nodeTypes: NodeTypes = {
+  trigger: TriggerNode,
+  email: EmailNode,
+  delay: DelayNode,
+};
+
+const initialNodes: Node[] = [
+  {
+    id: 'trigger-1',
+    type: 'trigger',
+    position: { x: 100, y: 50 },
+    data: { label: 'Quiz Completed' },
+  },
+];
+
+const initialEdges: Edge[] = [];
+
+interface EmailSequenceBuilderProps {
+  onSave: (sequence: any) => void;
+  onCancel: () => void;
+}
+
+export const EmailSequenceBuilder: React.FC<EmailSequenceBuilderProps> = ({ onSave, onCancel }) => {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false);
   const [sequenceName, setSequenceName] = useState('');
   const [nodeConfig, setNodeConfig] = useState<any>({});
-
-  // Sync trigger nodes with triggers prop
-  React.useEffect(() => {
-    setNodes((nds) => {
-      // Remove all existing trigger nodes
-      const nonTriggerNodes = nds.filter((n) => n.type !== 'trigger');
-      // Add a node for each trigger
-      const triggerNodes = triggers.map((trigger, idx) => ({
-        id: `trigger-${idx}`,
-        type: 'trigger',
-        position: { x: 100 + idx * 220, y: 50 },
-        data: { label: trigger, canDelete: triggers.length > 1, onDelete: handleDeleteNode },
-      }));
-      return [...triggerNodes, ...nonTriggerNodes];
-    });
-    // eslint-disable-next-line
-  }, [JSON.stringify(triggers)]);
-
-  // Add Trigger node
-  const addTriggerNode = () => {
-    const idx = nodes.filter(n => n.type === 'trigger').length;
-    setNodes((nds) => [
-      ...nds,
-      {
-        id: `trigger-${Date.now()}`,
-        type: 'trigger',
-        position: { x: 100 + idx * 220, y: 50 },
-        data: { label: 'Custom Trigger', canDelete: true, onDelete: handleDeleteNode },
-      },
-    ]);
-  };
-
-  // Delete node and its edges
-  const handleDeleteNode = (id: string) => {
-    setNodes((nds) => nds.filter((n) => n.id !== id));
-    setEdges((eds) => eds.filter((e) => e.source !== id && e.target !== id));
-  };
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -127,7 +100,7 @@ export const EmailSequenceBuilder: React.FC<EmailSequenceBuilderProps> = ({ trig
       id: `email-${Date.now()}`,
       type: 'email',
       position: { x: Math.random() * 300 + 100, y: Math.random() * 200 + 150 },
-      data: { subject: 'New Email', description: 'Click to configure', onDelete: handleDeleteNode },
+      data: { subject: 'New Email', description: 'Click to configure' },
     };
     setNodes((nds) => [...nds, newNode]);
   };
@@ -137,7 +110,7 @@ export const EmailSequenceBuilder: React.FC<EmailSequenceBuilderProps> = ({ trig
       id: `delay-${Date.now()}`,
       type: 'delay',
       position: { x: Math.random() * 300 + 100, y: Math.random() * 200 + 150 },
-      data: { duration: '15 Minutes', onDelete: handleDeleteNode },
+      data: { duration: '15 Minutes' },
     };
     setNodes((nds) => [...nds, newNode]);
   };
@@ -155,7 +128,7 @@ export const EmailSequenceBuilder: React.FC<EmailSequenceBuilderProps> = ({ trig
       setNodes((nds) =>
         nds.map((node) =>
           node.id === selectedNode.id
-            ? { ...node, data: { ...node.data, ...nodeConfig, onDelete: handleDeleteNode } }
+            ? { ...node, data: { ...node.data, ...nodeConfig } }
             : node
         )
       );
@@ -185,10 +158,6 @@ export const EmailSequenceBuilder: React.FC<EmailSequenceBuilderProps> = ({ trig
           />
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={addTriggerNode}>
-            <Zap className="w-4 h-4 mr-2" />
-            Add Trigger
-          </Button>
           <Button variant="outline" onClick={addEmailNode}>
             <Mail className="w-4 h-4 mr-2" />
             Add Email
