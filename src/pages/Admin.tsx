@@ -207,7 +207,13 @@ const Admin = () => {
   };
 
   const handleViewQuizDetails = async (application: ScholarshipApplication) => {
+    if (selectedApplication?.id === application.id && isQuizDetailOpen) {
+      // If same application and modal is already open, don't refetch
+      return;
+    }
+    
     setSelectedApplication(application);
+    setQuizResponses([]); // Clear previous responses
     setIsQuizDetailOpen(true);
     await fetchQuizResponses(application.id);
   };
@@ -669,7 +675,13 @@ const Admin = () => {
             </Card>
 
             {/* Quiz Detail Modal */}
-            <Dialog open={isQuizDetailOpen} onOpenChange={setIsQuizDetailOpen}>
+            <Dialog open={isQuizDetailOpen} onOpenChange={(open) => {
+              setIsQuizDetailOpen(open);
+              if (!open) {
+                setSelectedApplication(null);
+                setQuizResponses([]);
+              }
+            }}>
               <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>
@@ -753,40 +765,48 @@ const Admin = () => {
                           <p className="text-center text-muted-foreground py-6">
                             No quiz responses found for this applicant.
                           </p>
-                        ) : (
-                          <div className="space-y-4">
-                            {quizResponses.map((response, index) => (
-                              <div key={response.id} className="border rounded-lg p-4">
-                                <div className="flex items-start justify-between mb-3">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <Badge variant="outline">Q{index + 1}</Badge>
-                                      <Badge variant="secondary">{response.section_name}</Badge>
-                                      <Badge variant="outline">{response.question_type}</Badge>
-                                    </div>
-                                    <h4 className="font-medium mb-2">{response.question_text}</h4>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    {response.is_correct !== null && (
-                                      <Badge variant={response.is_correct ? 'default' : 'destructive'}>
-                                        {response.is_correct ? 'Correct' : 'Incorrect'}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                                
-                                <div className="bg-muted p-3 rounded">
-                                  <p className="text-sm font-medium text-muted-foreground mb-1">Answer:</p>
-                                  <p className="font-medium">{response.answer}</p>
-                                </div>
-                                
-                                <div className="mt-2 text-xs text-muted-foreground">
-                                  Answered at: {new Date(response.answered_at).toLocaleString()}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                         ) : (
+                           <div className="space-y-4">
+                             {quizResponses
+                               .filter((response, index, self) => 
+                                 // Remove duplicates based on question_id and session_id
+                                 index === self.findIndex(r => 
+                                   r.question_id === response.question_id && 
+                                   r.session_id === response.session_id
+                                 )
+                               )
+                               .map((response, index) => (
+                               <div key={`${response.session_id}-${response.question_id}`} className="border rounded-lg p-4">
+                                 <div className="flex items-start justify-between mb-3">
+                                   <div className="flex-1">
+                                     <div className="flex items-center gap-2 mb-2">
+                                       <Badge variant="outline">Q{index + 1}</Badge>
+                                       <Badge variant="secondary">{response.section_name}</Badge>
+                                       <Badge variant="outline">{response.question_type}</Badge>
+                                     </div>
+                                     <h4 className="font-medium mb-2">{response.question_text}</h4>
+                                   </div>
+                                   <div className="flex items-center gap-2">
+                                     {response.is_correct !== null && (
+                                       <Badge variant={response.is_correct ? 'default' : 'destructive'}>
+                                         {response.is_correct ? 'Correct' : 'Incorrect'}
+                                       </Badge>
+                                     )}
+                                   </div>
+                                 </div>
+                                 
+                                 <div className="bg-muted p-3 rounded">
+                                   <p className="text-sm font-medium text-muted-foreground mb-1">Answer:</p>
+                                   <p className="font-medium">{response.answer}</p>
+                                 </div>
+                                 
+                                 <div className="mt-2 text-xs text-muted-foreground">
+                                   Answered at: {new Date(response.answered_at).toLocaleString()}
+                                 </div>
+                               </div>
+                             ))}
+                           </div>
+                         )}
                       </CardContent>
                     </Card>
 
