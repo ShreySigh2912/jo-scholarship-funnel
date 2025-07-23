@@ -139,6 +139,7 @@ const Admin = () => {
   const fetchQuizResponses = async (applicationId: string) => {
     try {
       setLoadingResponses(true);
+      console.log('Fetching quiz responses for application:', applicationId);
       
       // First get the quiz session for this application
       const { data: sessionData, error: sessionError } = await supabase
@@ -147,12 +148,25 @@ const Admin = () => {
         .eq('application_id', applicationId)
         .maybeSingle();
 
-      if (sessionError) throw sessionError;
+      console.log('Quiz session query result:', { sessionData, sessionError });
+
+      if (sessionError) {
+        console.error('Error fetching quiz session:', sessionError);
+        throw sessionError;
+      }
       
       if (!sessionData) {
+        console.log('No quiz session found for application:', applicationId);
         setQuizResponses([]);
+        toast({
+          title: "No Quiz Data",
+          description: "No quiz session found for this application.",
+          variant: "default"
+        });
         return;
       }
+
+      console.log('Found quiz session:', sessionData.id);
 
       // Then get all responses for this session
       const { data: responsesData, error: responsesError } = await supabase
@@ -161,14 +175,30 @@ const Admin = () => {
         .eq('session_id', sessionData.id)
         .order('answered_at', { ascending: true });
 
-      if (responsesError) throw responsesError;
-      setQuizResponses(responsesData || []);
+      console.log('Quiz responses query result:', { responsesData, responsesError });
 
-    } catch (error) {
+      if (responsesError) {
+        console.error('Error fetching quiz responses:', responsesError);
+        throw responsesError;
+      }
+
+      const responses = responsesData || [];
+      console.log('Setting quiz responses:', responses.length, 'responses found');
+      setQuizResponses(responses);
+
+      if (responses.length === 0) {
+        toast({
+          title: "No Responses",
+          description: "No quiz responses found for this session.",
+          variant: "default"
+        });
+      }
+
+    } catch (error: any) {
       console.error('Error fetching quiz responses:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch quiz responses. Please try again.",
+        description: `Failed to fetch quiz responses: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
