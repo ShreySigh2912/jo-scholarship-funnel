@@ -39,6 +39,11 @@ interface Question {
 }
 
 const Admin = () => {
+  const { user, loading: authStateLoading, isAdmin, signIn, signOut } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [applications, setApplications] = useState<ScholarshipApplication[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -64,18 +69,9 @@ const Admin = () => {
   });
   const [isSendingEmails, setIsSendingEmails] = useState(false);
 
-  const { user, loading: authStateLoading, isAdmin, signOut, signIn } = useAuth();
-  
-  // Auth states
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [authLoading, setAuthLoading] = useState(false);
-
   useEffect(() => {
-    if (!authStateLoading && user && isAdmin) {
-      fetchData();
-    }
-  }, [user, isAdmin, authStateLoading]);
+    if (user && isAdmin) fetchData();
+  }, [user, isAdmin]);
 
   const fetchData = async () => {
     try {
@@ -221,22 +217,12 @@ const Admin = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthLoading(true);
-
     try {
       const { error } = await signIn(email, password);
       if (error) throw error;
-      
-      toast({
-        title: "Success",
-        description: "Signed in successfully!",
-      });
+      toast({ title: "Success", description: "Signed in successfully!" });
     } catch (error: any) {
-      console.error('Sign in error:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to sign in. Please try again.",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: error.message || "Failed to sign in. Please try again.", variant: "destructive" });
     } finally {
       setAuthLoading(false);
     }
@@ -370,18 +356,18 @@ const Admin = () => {
   // Add timeout to prevent infinite loading
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (authStateLoading) {
-        console.warn('Auth loading timeout - forcing loading to false');
-        // This is a fallback in case auth gets stuck
-      }
+      // if (authStateLoading) {
+      //   console.warn('Auth loading timeout - forcing loading to false');
+      //   // This is a fallback in case auth gets stuck
+      // }
     }, 10000); // 10 second timeout
 
     return () => clearTimeout(timeout);
-  }, [authStateLoading]);
+  }, []); // Removed authStateLoading from dependency array
 
-  console.log('Admin render - authStateLoading:', authStateLoading, 'loading:', loading, 'user:', user?.email, 'isAdmin:', isAdmin);
+  console.log('Admin render - loading:', loading);
 
-  if (authStateLoading || loading) {
+  if (authStateLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
@@ -401,36 +387,14 @@ const Admin = () => {
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
               <div>
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
               </div>
               <Button type="submit" className="w-full" disabled={authLoading}>
-                {authLoading ? (
-                  <>
-                    <LogIn className="h-4 w-4 mr-2 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="h-4 w-4 mr-2" />
-                    Sign In
-                  </>
-                )}
+                {authLoading ? (<><LogIn className="h-4 w-4 mr-2 animate-spin" />Signing in...</>) : (<><LogIn className="h-4 w-4 mr-2" />Sign In</>)}
               </Button>
             </form>
           </CardContent>
@@ -449,8 +413,7 @@ const Admin = () => {
             <p className="text-gray-600">Manage scholarship applications and communications</p>
           </div>
           <Button onClick={handleSignOut} variant="outline">
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
+            <LogOut className="h-4 w-4 mr-2" />Sign Out
           </Button>
         </div>
 
