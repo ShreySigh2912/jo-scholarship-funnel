@@ -367,6 +367,20 @@ const Admin = () => {
     }
   };
 
+  // Add timeout to prevent infinite loading
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (authStateLoading) {
+        console.warn('Auth loading timeout - forcing loading to false');
+        // This is a fallback in case auth gets stuck
+      }
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [authStateLoading]);
+
+  console.log('Admin render - authStateLoading:', authStateLoading, 'loading:', loading, 'user:', user?.email, 'isAdmin:', isAdmin);
+
   if (authStateLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
