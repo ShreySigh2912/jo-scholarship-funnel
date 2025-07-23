@@ -70,7 +70,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 const getRandomizedQuizData = (): QuizData => {
   const baseData: QuizData = {
     title: "MBA Scholarship Quiz",
-    totalQuestions: 35,
+    totalQuestions: 33,
     estimatedTime: "15–20 minutes",
     sections: [
       {
