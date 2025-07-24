@@ -72,8 +72,13 @@ const Admin = () => {
   const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
-    if (!authStateLoading && user && isAdmin) {
-      fetchData();
+    if (!authStateLoading) {
+      if (user && isAdmin) {
+        fetchData();
+      } else {
+        // If not authenticated or not admin, stop loading immediately
+        setLoading(false);
+      }
     }
   }, [user, isAdmin, authStateLoading]);
 
