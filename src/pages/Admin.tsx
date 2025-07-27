@@ -530,7 +530,7 @@ const Admin = () => {
               onSendEmail={handleSendEmails}
               onSaveTemplate={handleSaveTemplate}
               templates={emailTemplates}
-              recipients={applications.map(app => app.email)}
+              recipients={applications}
               isLoading={isSendingEmails}
             />
           </TabsContent>

@@ -14,8 +14,17 @@ interface EmailComposerProps {
   onSendEmail: (emailData: EmailData) => void;
   onSaveTemplate: (template: EmailTemplate) => void;
   templates: EmailTemplate[];
-  recipients: string[];
+  recipients: ScholarshipApplication[];
   isLoading?: boolean;
+}
+
+interface ScholarshipApplication {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface EmailData {
@@ -36,11 +45,13 @@ interface EmailTemplate {
 }
 
 const personalizationTokens = [
-  { token: '{{name}}', description: 'Recipient\'s name' },
-  { token: '{{email}}', description: 'Recipient\'s email' },
+  { token: '{{name}}', description: 'Recipient\'s full name' },
+  { token: '{{email}}', description: 'Recipient\'s email address' },
   { token: '{{first_name}}', description: 'First name only' },
-  { token: '{{test_score}}', description: 'Quiz test score' },
+  { token: '{{phone}}', description: 'Phone number' },
+  { token: '{{test_score}}', description: 'Quiz test score percentage' },
   { token: '{{completion_date}}', description: 'Test completion date' },
+  { token: '{{application_date}}', description: 'Application submission date' },
   { token: '{{application_url}}', description: 'Application form link' },
 ];
 
@@ -95,6 +106,7 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [templateName, setTemplateName] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [isPlainText, setIsPlainText] = useState(true);
   const [cursorPosition, setCursorPosition] = useState(0);
   
   const contentRef = useRef<HTMLTextAreaElement>(null);
@@ -115,13 +127,68 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
     }
   };
 
-  const insertFormatting = (tag: string, closeTag?: string) => {
+  const insertFormatting = (action: string) => {
     if (contentRef.current) {
       const textarea = contentRef.current;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
       const selectedText = content.substring(start, end);
-      const replacement = `<${tag}>${selectedText}</${closeTag || tag}>`;
+      
+      let replacement = '';
+      
+      if (isPlainText) {
+        // Plain text formatting
+        switch (action) {
+          case 'bold':
+            replacement = `**${selectedText}**`;
+            break;
+          case 'italic':
+            replacement = `*${selectedText}*`;
+            break;
+          case 'heading':
+            replacement = `\n# ${selectedText || 'Heading'}\n`;
+            break;
+          case 'bullet':
+            replacement = `\n• ${selectedText || 'List item'}\n`;
+            break;
+          case 'numbered':
+            replacement = `\n1. ${selectedText || 'List item'}\n`;
+            break;
+          case 'button':
+            replacement = `[BUTTON: ${selectedText || 'Click Here'}]`;
+            break;
+          case 'link':
+            replacement = `[${selectedText || 'Link Text'}](URL)`;
+            break;
+          case 'line':
+            replacement = `\n---\n`;
+            break;
+          default:
+            replacement = selectedText;
+        }
+      } else {
+        // HTML formatting (legacy support)
+        switch (action) {
+          case 'bold':
+            replacement = `<strong>${selectedText}</strong>`;
+            break;
+          case 'italic':
+            replacement = `<em>${selectedText}</em>`;
+            break;
+          case 'heading':
+            replacement = `<h2>${selectedText}</h2>`;
+            break;
+          case 'bullet':
+            replacement = `<ul><li>${selectedText}</li></ul>`;
+            break;
+          case 'numbered':
+            replacement = `<ol><li>${selectedText}</li></ol>`;
+            break;
+          default:
+            replacement = selectedText;
+        }
+      }
+      
       const newContent = content.substring(0, start) + replacement + content.substring(end);
       setContent(newContent);
       
@@ -200,19 +267,47 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
   };
 
   const selectAllRecipients = () => {
-    setSelectedRecipients(recipients);
+    setSelectedRecipients(recipients.map(r => r.email));
   };
 
   const clearAllRecipients = () => {
     setSelectedRecipients([]);
   };
 
-  const previewContent = content
-    .replace(/{{name}}/g, 'John Doe')
-    .replace(/{{email}}/g, 'john.doe@example.com')
-    .replace(/{{first_name}}/g, 'John')
+  const formatContentForPreview = (text: string) => {
+    if (isPlainText) {
+      return text
+        // Bold text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Italic text
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // Headings
+        .replace(/^# (.*$)/gm, '<h2>$1</h2>')
+        // Bullet lists
+        .replace(/^• (.*$)/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+        // Numbered lists
+        .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
+        // Buttons
+        .replace(/\[BUTTON: (.*?)\]/g, '<button style="background: linear-gradient(135deg, #4c51bf, #667eea); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; border: none; font-weight: bold; cursor: pointer;">$1</button>')
+        // Links
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: #4c51bf; text-decoration: underline;">$1</a>')
+        // Line breaks
+        .replace(/\n---\n/g, '<hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">')
+        // Preserve line breaks
+        .replace(/\n/g, '<br>');
+    }
+    return text;
+  };
+
+  const previewContent = formatContentForPreview(content)
+    .replace(/{{name}}/g, recipients[0]?.name || 'John Doe')
+    .replace(/{{email}}/g, recipients[0]?.email || 'john.doe@example.com')
+    .replace(/{{first_name}}/g, recipients[0]?.name?.split(' ')[0] || 'John')
+    .replace(/{{phone}}/g, recipients[0]?.phone || '+1 (555) 123-4567')
     .replace(/{{test_score}}/g, '85%')
     .replace(/{{completion_date}}/g, new Date().toLocaleDateString())
+    .replace(/{{application_date}}/g, recipients[0]?.created_at ? new Date(recipients[0].created_at).toLocaleDateString() : new Date().toLocaleDateString())
     .replace(/{{application_url}}/g, '#application-form');
 
   return (
@@ -285,6 +380,27 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
             />
           </div>
 
+          {/* Content Type Toggle */}
+          <div className="flex items-center justify-between">
+            <Label>Email Content</Label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={isPlainText ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIsPlainText(true)}
+              >
+                Plain Text
+              </Button>
+              <Button
+                variant={!isPlainText ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIsPlainText(false)}
+              >
+                HTML
+              </Button>
+            </div>
+          </div>
+
           {/* Personalization Tokens */}
           <div>
             <Label>Personalization Tokens</Label>
@@ -296,43 +412,93 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
                   size="sm"
                   onClick={() => insertPersonalizationToken(token)}
                   className="text-xs"
+                  title={description}
                 >
                   {token}
                 </Button>
               ))}
             </div>
             <p className="text-sm text-muted-foreground mt-1">
-              Click tokens to insert them into your email content. They'll be replaced with actual values when sent.
+              Click tokens to insert them into your email content. They'll be replaced with actual recipient data when sent.
             </p>
           </div>
 
           {/* Formatting Toolbar */}
           <div>
-            <Label>Email Content</Label>
             <div className="flex flex-wrap gap-1 p-2 bg-muted rounded-t-lg border-b">
-              <Button size="sm" variant="ghost" onClick={() => insertFormatting('strong')}>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('bold')}
+                title="Bold text"
+              >
                 <Bold className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => insertFormatting('em')}>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('italic')}
+                title="Italic text"
+              >
                 <Italic className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => insertFormatting('u')}>
-                <Underline className="h-4 w-4" />
-              </Button>
               <Separator orientation="vertical" className="h-6" />
-              <Button size="sm" variant="ghost" onClick={() => insertFormatting('h2')}>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('heading')}
+                title="Heading"
+              >
                 <Type className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => insertFormatting('ul')}>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('bullet')}
+                title="Bullet list"
+              >
                 <List className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => insertFormatting('ol')}>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('numbered')}
+                title="Numbered list"
+              >
                 <ListOrdered className="h-4 w-4" />
+              </Button>
+              <Separator orientation="vertical" className="h-6" />
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('button')}
+                title="Add button"
+              >
+                <Mail className="h-4 w-4" />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('link')}
+                title="Add link"
+              >
+                <Link className="h-4 w-4" />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => insertFormatting('line')}
+                title="Horizontal line"
+              >
+                —
               </Button>
             </div>
             <Textarea
               ref={contentRef}
-              placeholder="Compose your email content here... You can use HTML tags for formatting."
+              placeholder={isPlainText 
+                ? "Write your email in plain English. Use formatting buttons above to add style.\n\nExample:\n**Bold text** for emphasis\n*Italic text* for subtle emphasis\n# Heading for section titles\n• Bullet points for lists\n[BUTTON: Click Here] for call-to-action buttons"
+                : "Compose your email content here... You can use HTML tags for formatting."
+              }
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="min-h-[300px] rounded-t-none"
@@ -398,15 +564,18 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
               </div>
             </div>
             <div className="max-h-32 overflow-y-auto border rounded-lg p-3 space-y-2">
-              {recipients.map(email => (
-                <div key={email} className="flex items-center space-x-2">
+              {recipients.map(recipient => (
+                <div key={recipient.email} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={selectedRecipients.includes(email)}
-                    onChange={() => toggleRecipient(email)}
+                    checked={selectedRecipients.includes(recipient.email)}
+                    onChange={() => toggleRecipient(recipient.email)}
                     className="rounded"
                   />
-                  <span className="text-sm">{email}</span>
+                  <div className="flex-1">
+                    <span className="text-sm font-medium">{recipient.name}</span>
+                    <span className="text-xs text-muted-foreground ml-2">{recipient.email}</span>
+                  </div>
                 </div>
               ))}
             </div>
