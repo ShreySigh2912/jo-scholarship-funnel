@@ -26,24 +26,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!mounted) return;
         
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Check admin role when session changes
+        // Never await inside this callback to avoid deadlocks
+        console.log('Setting auth loading to false (auth callback)');
+        setLoading(false);
+        
+        // Defer admin role check when session changes
         if (session?.user) {
-          console.log('Checking admin role for:', session.user.id);
-          await checkAdminRole(session.user.id);
+          const uid = session.user.id;
+          console.log('Queueing admin role check for:', uid);
+          setTimeout(() => {
+            if (!mounted) return;
+            checkAdminRole(uid);
+          }, 0);
         } else {
           console.log('No user session, setting admin to false');
           setIsAdmin(false);
         }
-        
-        console.log('Setting auth loading to false');
-        setLoading(false);
       }
     );
 
@@ -65,16 +70,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         
+        // Do not block on admin check; mark as not loading immediately
+        console.log('Setting initial auth loading to false');
+        setLoading(false);
+        
         if (session?.user) {
-          console.log('Checking admin role for existing session:', session.user.id);
-          await checkAdminRole(session.user.id);
+          const uid = session.user.id;
+          console.log('Queueing admin role check for existing session:', uid);
+          setTimeout(() => {
+            if (!mounted) return;
+            checkAdminRole(uid);
+          }, 0);
         } else {
           console.log('No existing session');
           setIsAdmin(false);
         }
-        
-        console.log('Setting initial auth loading to false');
-        setLoading(false);
       } catch (error) {
         console.error('Error in initSession:', error);
         setLoading(false);
