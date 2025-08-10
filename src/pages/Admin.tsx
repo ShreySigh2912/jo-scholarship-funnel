@@ -376,8 +376,9 @@ const Admin = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (authStateLoading) {
-        console.warn('Auth loading timeout - forcing loading to false');
-        // This is a fallback in case auth gets stuck
+        console.warn('Auth loading timeout - showing login screen');
+        // Force-stop page loading so the login form renders
+        setLoading(false);
       }
     }, 10000); // 10 second timeout
 
